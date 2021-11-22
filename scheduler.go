@@ -60,13 +60,21 @@ func checkForUpdates(ce *database.CatalogEntry) error {
 	logger.Debug("Checking for updates")
 
 	ver, vertime, err := fetcher.Get(ce.Fetcher).FetchVersion(context.Background(), &ce.FetcherConfig)
-	if err != nil {
-		return errors.Wrap(err, "fetching version")
-	}
-
 	ver = strings.TrimPrefix(ver, "v")
 
-	if cm.CurrentVersion != ver {
+	switch {
+
+	case err != nil:
+		log.WithField("entry", ce.Key()).WithError(err).Error("Fetcher caused error, error is stored in entry")
+		cm.Error = err.Error()
+
+	case cm.CurrentVersion != ver:
+
+		logger.WithFields(log.Fields{
+			"from": cm.CurrentVersion,
+			"to":   ver,
+		}).Info("Entry had version update")
+
 		if err = storage.Logs.Add(&database.LogEntry{
 			CatalogName: ce.Name,
 			CatalogTag:  ce.Tag,
@@ -76,15 +84,16 @@ func checkForUpdates(ce *database.CatalogEntry) error {
 		}); err != nil {
 			return errors.Wrap(err, "adding log entry")
 		}
-		logger.WithFields(log.Fields{
-			"from": cm.CurrentVersion,
-			"to":   ver,
-		}).Info("Entry had version update")
+
 		cm.VersionTime = func(v time.Time) *time.Time { return &v }(vertime)
+		cm.CurrentVersion = ver
+		fallthrough
+
+	default:
+		cm.Error = ""
+
 	}
 
-	cm.CurrentVersion = ver
 	cm.LastChecked = func(v time.Time) *time.Time { return &v }(time.Now())
-
 	return errors.Wrap(storage.Catalog.PutMeta(cm), "updating meta entry")
 }

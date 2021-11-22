@@ -33,7 +33,11 @@ func (h HTMLFetcher) FetchVersion(ctx context.Context, attrs *fieldcollection.Fi
 		return "", time.Time{}, errors.Wrap(err, "querying xpath")
 	}
 
-	if node.Type == html.ElementNode && node.FirstChild.Type == html.TextNode {
+	if node == nil {
+		return "", time.Time{}, errors.New("xpath expression lead to nil-node")
+	}
+
+	if node.Type == html.ElementNode && node.FirstChild != nil && node.FirstChild.Type == html.TextNode {
 		node = node.FirstChild
 	}
 

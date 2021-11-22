@@ -37,6 +37,7 @@ type (
 		CatalogName    string     `gorm:"primaryKey" json:"-"`
 		CatalogTag     string     `gorm:"primaryKey" json:"-"`
 		CurrentVersion string     `json:"current_version,omitempty"`
+		Error          string     `json:"error,omitempty"`
 		LastChecked    *time.Time `json:"last_checked,omitempty"`
 		VersionTime    *time.Time `json:"version_time,omitempty"`
 	}
