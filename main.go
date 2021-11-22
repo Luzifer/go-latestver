@@ -18,6 +18,7 @@ import (
 
 var (
 	cfg = struct {
+		BaseURL        string        `flag:"base-url" default:"https://example.com/" description:"Base-URL the application is reachable at"`
 		Config         string        `flag:"config,c" default:"config.yaml" description:"Configuration file with catalog entries"`
 		Listen         string        `flag:"listen" default:":3000" description:"Port/IP to listen on"`
 		LogLevel       string        `flag:"log-level" default:"info" description:"Log level (debug, info, warn, error, fatal)"`
@@ -28,6 +29,7 @@ var (
 	}{}
 
 	configFile = config.New()
+	router     *mux.Router
 	storage    *database.Client
 
 	version = "dev"
@@ -73,14 +75,18 @@ func main() {
 	scheduler.AddFunc("@every 1m", schedulerRun)
 	scheduler.Start()
 
-	router := mux.NewRouter()
+	router = mux.NewRouter()
 	router.HandleFunc("/v1/catalog", handleCatalogList).Methods(http.MethodGet)
 	router.HandleFunc("/v1/catalog/{name}/{tag}", handleCatalogGet).Methods(http.MethodGet)
 	router.HandleFunc("/v1/catalog/{name}/{tag}/log", handleLog).Methods(http.MethodGet)
-	router.HandleFunc("/v1/catalog/{name}/{tag}/log.rss", handleLogFeed).Methods(http.MethodGet)
 	router.HandleFunc("/v1/catalog/{name}/{tag}/version", handleCatalogGetVersion).Methods(http.MethodGet)
 	router.HandleFunc("/v1/log", handleLog).Methods(http.MethodGet)
-	router.HandleFunc("/v1/log.rss", handleLogFeed).Methods(http.MethodGet)
+
+	router.HandleFunc("/", nil).Methods(http.MethodGet).Name("catalog")
+	router.HandleFunc("/{name}/{tag}", nil).Methods(http.MethodGet).Name("catalog-entry")
+	router.HandleFunc("/{name}/{tag}/log.rss", handleLogFeed).Methods(http.MethodGet).Name("catalog-entry-rss")
+	router.HandleFunc("/log", nil).Methods(http.MethodGet)
+	router.HandleFunc("/log.rss", handleLogFeed).Methods(http.MethodGet).Name("log-rss")
 
 	var handler http.Handler = router
 	handler = httpHelper.GzipHandler(handler)
