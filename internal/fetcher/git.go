@@ -4,13 +4,14 @@ import (
 	"context"
 	"time"
 
-	"github.com/Luzifer/go-latestver/internal/database"
-	"github.com/Luzifer/go_helpers/v2/fieldcollection"
 	"github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/config"
 	"github.com/go-git/go-git/v5/plumbing"
 	"github.com/go-git/go-git/v5/storage/memory"
 	"github.com/pkg/errors"
+
+	"github.com/Luzifer/go-latestver/internal/database"
+	"github.com/Luzifer/go_helpers/v2/fieldcollection"
 )
 
 type (

@@ -4,10 +4,11 @@ import (
 	"os"
 	"time"
 
-	"github.com/Luzifer/go-latestver/internal/database"
-	"github.com/Luzifer/go-latestver/internal/fetcher"
 	"github.com/pkg/errors"
 	"gopkg.in/yaml.v3"
+
+	"github.com/Luzifer/go-latestver/internal/database"
+	"github.com/Luzifer/go-latestver/internal/fetcher"
 )
 
 var ErrCatalogEntryNotFound = errors.New("catalog entry not found")

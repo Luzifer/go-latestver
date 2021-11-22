@@ -5,12 +5,13 @@ import (
 	"regexp"
 	"time"
 
-	"github.com/Luzifer/go-latestver/internal/database"
-	"github.com/Luzifer/go_helpers/v2/fieldcollection"
 	"github.com/antchfx/htmlquery"
 	"github.com/antchfx/xpath"
 	"github.com/pkg/errors"
 	"golang.org/x/net/html"
+
+	"github.com/Luzifer/go-latestver/internal/database"
+	"github.com/Luzifer/go_helpers/v2/fieldcollection"
 )
 
 var htmlFetcherDefaultRegex = `(v?(?:[0-9]+\.?){2,})`

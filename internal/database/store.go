@@ -5,10 +5,11 @@ import (
 	"strings"
 	"time"
 
-	"github.com/Luzifer/go_helpers/v2/fieldcollection"
 	"github.com/pkg/errors"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
+
+	"github.com/Luzifer/go_helpers/v2/fieldcollection"
 )
 
 type (

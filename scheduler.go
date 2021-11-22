@@ -5,10 +5,11 @@ import (
 	"strings"
 	"time"
 
-	"github.com/Luzifer/go-latestver/internal/database"
-	"github.com/Luzifer/go-latestver/internal/fetcher"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
+
+	"github.com/Luzifer/go-latestver/internal/database"
+	"github.com/Luzifer/go-latestver/internal/fetcher"
 )
 
 var schedulerRunActive bool

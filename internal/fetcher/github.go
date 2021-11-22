@@ -8,9 +8,10 @@ import (
 	"os"
 	"time"
 
+	"github.com/pkg/errors"
+
 	"github.com/Luzifer/go-latestver/internal/database"
 	"github.com/Luzifer/go_helpers/v2/fieldcollection"
-	"github.com/pkg/errors"
 )
 
 const githubHTTPTimeout = 2 * time.Second
