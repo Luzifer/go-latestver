@@ -19,6 +19,13 @@ import (
 	"github.com/Luzifer/go-latestver/internal/fetcher"
 )
 
+type (
+	APICatalogEntry struct {
+		database.CatalogEntry
+		database.CatalogMeta
+	}
+)
+
 func buildFullURL(u *url.URL) string {
 	return strings.Join([]string{
 		strings.TrimRight(cfg.BaseURL, "/"),
@@ -49,10 +56,9 @@ func handleCatalogGet(w http.ResponseWriter, r *http.Request) {
 		ce.Links,
 		fetcher.Get(ce.Fetcher).Links(&ce.FetcherConfig)...,
 	)
-	ce.CatalogMeta = *cm
 
 	w.Header().Set("Content-Type", "application/json")
-	if err = json.NewEncoder(w).Encode(ce); err != nil {
+	if err = json.NewEncoder(w).Encode(APICatalogEntry{CatalogEntry: ce, CatalogMeta: *cm}); err != nil {
 		log.WithError(err).Error("Unable to encode catalog entry")
 		http.Error(w, "Unable to encode catalog meta", http.StatusInternalServerError)
 		return
@@ -83,7 +89,7 @@ func handleCatalogGetVersion(w http.ResponseWriter, r *http.Request) {
 }
 
 func handleCatalogList(w http.ResponseWriter, r *http.Request) {
-	out := make([]database.CatalogEntry, len(configFile.Catalog))
+	out := make([]APICatalogEntry, len(configFile.Catalog))
 
 	for i := range configFile.Catalog {
 		ce := configFile.Catalog[i]
@@ -99,9 +105,8 @@ func handleCatalogList(w http.ResponseWriter, r *http.Request) {
 			ce.Links,
 			fetcher.Get(ce.Fetcher).Links(&ce.FetcherConfig)...,
 		)
-		ce.CatalogMeta = *cm
 
-		out[i] = ce
+		out[i] = APICatalogEntry{CatalogEntry: ce, CatalogMeta: *cm}
 	}
 
 	w.Header().Set("Content-Type", "application/json")

@@ -23,8 +23,6 @@ type (
 		CheckInterval time.Duration `json:"-" yaml:"check_interval"`
 
 		Links []CatalogLink `json:"links" yaml:"links"`
-
-		CatalogMeta `yaml:"-"`
 	}
 
 	CatalogLink struct {
