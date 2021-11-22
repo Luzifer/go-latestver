@@ -1,0 +1,102 @@
+package fetcher
+
+import (
+	"context"
+	"time"
+
+	"github.com/Luzifer/go-latestver/internal/database"
+	"github.com/Luzifer/go_helpers/v2/fieldcollection"
+	"github.com/go-git/go-git/v5"
+	"github.com/go-git/go-git/v5/config"
+	"github.com/go-git/go-git/v5/plumbing"
+	"github.com/go-git/go-git/v5/storage/memory"
+	"github.com/pkg/errors"
+)
+
+type (
+	GitTagFetcher struct{}
+)
+
+func init() { registerFetcher("git_tag", func() Fetcher { return &GitTagFetcher{} }) }
+
+func (g GitTagFetcher) FetchVersion(ctx context.Context, attrs *fieldcollection.FieldCollection) (string, time.Time, error) {
+	repo, err := git.Init(memory.NewStorage(), nil)
+	if err != nil {
+		return "", time.Time{}, errors.Wrap(err, "opening in-mem repo")
+	}
+
+	_, err = repo.CreateRemote(&config.RemoteConfig{
+		Name: "origin",
+		URLs: []string{attrs.MustString("remote", nil)},
+	})
+	if err != nil {
+		return "", time.Time{}, errors.Wrap(err, "adding remote")
+	}
+
+	if err = repo.Fetch(&git.FetchOptions{
+		Depth:      1,
+		RefSpecs:   []config.RefSpec{"+refs/tags/*:refs/remotes/origin/tags/*"},
+		RemoteName: "origin",
+	}); err != nil {
+		return "", time.Time{}, errors.Wrap(err, "fetching remote")
+	}
+
+	tags, err := repo.Tags()
+	if err != nil {
+		return "", time.Time{}, errors.Wrap(err, "listing tags")
+	}
+
+	var (
+		latestTag     *plumbing.Reference
+		latestTagTime time.Time
+	)
+	if err = tags.ForEach(func(ref *plumbing.Reference) error {
+		tt, err := g.tagRefToTime(repo, ref)
+		if err != nil {
+			return errors.Wrap(err, "fetching time for tag")
+		}
+
+		if latestTag == nil || tt.After(latestTagTime) {
+			latestTag = ref
+			latestTagTime = tt
+		}
+
+		return nil
+	}); err != nil {
+		return "", time.Time{}, errors.Wrap(err, "iterating tags")
+	}
+
+	if latestTag == nil {
+		return "", time.Time{}, ErrNoVersionFound
+	}
+
+	return latestTag.Name().Short(), latestTagTime, nil
+}
+
+func (g GitTagFetcher) Links(attrs *fieldcollection.FieldCollection) []database.CatalogLink {
+	return nil
+}
+
+func (g GitTagFetcher) Validate(attrs *fieldcollection.FieldCollection) error {
+	if v, err := attrs.String("remote"); err != nil || v == "" {
+		return errors.New("remote is expected to be non-empty string")
+	}
+
+	return nil
+}
+
+func (g GitTagFetcher) tagRefToTime(repo *git.Repository, tag *plumbing.Reference) (time.Time, error) {
+	tagObj, err := repo.TagObject(tag.Hash())
+	if err == nil {
+		// Annotated tag: Take the time of the tag
+		return tagObj.Tagger.When, nil
+	}
+
+	commitObj, err := repo.CommitObject(tag.Hash())
+	if err == nil {
+		// Lightweight tag: Take the time of the commit
+		return commitObj.Committer.When, nil
+	}
+
+	return time.Time{}, errors.New("reference points neither to tag nor to commit")
+}
