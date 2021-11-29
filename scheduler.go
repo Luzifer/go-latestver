@@ -92,16 +92,17 @@ func checkForUpdates(ce *database.CatalogEntry) error {
 }
 
 func nextCheckTime(ce *database.CatalogEntry, lastCheck *time.Time) time.Time {
+	if lastCheck == nil {
+		// Has never been checked, check ASAP
+		return time.Now()
+	}
+
 	hash := md5.New()
 	fmt.Fprint(hash, ce.Key())
 
 	var jitter int64
 	for i, c := range hash.Sum(nil) {
 		jitter += int64(c) * int64(math.Pow(10, float64(i)))
-	}
-
-	if lastCheck == nil {
-		lastCheck = ptrTime(processStart)
 	}
 
 	next := lastCheck.
