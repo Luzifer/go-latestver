@@ -54,6 +54,7 @@ func checkForUpdates(ce *database.CatalogEntry) error {
 
 	ver, vertime, err := fetcher.Get(ce.Fetcher).FetchVersion(context.Background(), &ce.FetcherConfig)
 	ver = strings.TrimPrefix(ver, "v")
+	vertime = vertime.Truncate(time.Second).UTC()
 
 	switch {
 
@@ -87,7 +88,7 @@ func checkForUpdates(ce *database.CatalogEntry) error {
 
 	}
 
-	cm.LastChecked = ptrTime(time.Now())
+	cm.LastChecked = ptrTime(time.Now().Truncate(time.Second).UTC())
 	return errors.Wrap(storage.Catalog.PutMeta(cm), "updating meta entry")
 }
 
