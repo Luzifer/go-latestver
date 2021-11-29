@@ -21,6 +21,7 @@ require (
 	github.com/ProtonMail/go-crypto v0.0.0-20210428141323-04723f9f07d7 // indirect
 	github.com/acomagu/bufpipe v1.0.3 // indirect
 	github.com/antchfx/htmlquery v1.2.4 // indirect
+	github.com/antchfx/jsonquery v1.1.5 // indirect
 	github.com/antchfx/xpath v1.2.0 // indirect
 	github.com/blang/semver/v4 v4.0.0 // indirect
 	github.com/emirpasic/gods v1.12.0 // indirect
