@@ -2,6 +2,9 @@ package main
 
 import (
 	"context"
+	"crypto/md5"
+	"fmt"
+	"math"
 	"strings"
 	"time"
 
@@ -36,23 +39,13 @@ func checkForUpdates(ce *database.CatalogEntry) error {
 		return errors.Wrap(err, "getting catalog meta")
 	}
 
-	checkTime := time.Now()
-	if cm.LastChecked != nil {
-		checkTime = *cm.LastChecked
-
-		switch {
-		case ce.CheckInterval > 0:
-			checkTime = checkTime.Add(ce.CheckInterval)
-
-		case configFile.CheckInterval > 0:
-			checkTime = checkTime.Add(configFile.CheckInterval)
-
-		default:
-			checkTime = checkTime.Add(time.Hour)
-		}
-	}
-
-	if checkTime.After(time.Now()) {
+	nct := nextCheckTime(ce, cm.LastChecked)
+	logger = logger.WithFields(log.Fields{
+		"last": cm.LastChecked,
+		"next": nct,
+	})
+	logger.Trace("Next check time found")
+	if nct.After(time.Now()) {
 		// Not yet ready to check
 		return nil
 	}
@@ -85,7 +78,7 @@ func checkForUpdates(ce *database.CatalogEntry) error {
 			return errors.Wrap(err, "adding log entry")
 		}
 
-		cm.VersionTime = func(v time.Time) *time.Time { return &v }(vertime)
+		cm.VersionTime = ptrTime(vertime)
 		cm.CurrentVersion = ver
 		fallthrough
 
@@ -94,6 +87,32 @@ func checkForUpdates(ce *database.CatalogEntry) error {
 
 	}
 
-	cm.LastChecked = func(v time.Time) *time.Time { return &v }(time.Now())
+	cm.LastChecked = ptrTime(time.Now())
 	return errors.Wrap(storage.Catalog.PutMeta(cm), "updating meta entry")
 }
+
+func nextCheckTime(ce *database.CatalogEntry, lastCheck *time.Time) time.Time {
+	hash := md5.New()
+	fmt.Fprint(hash, ce.Key())
+
+	var jitter int64
+	for i, c := range hash.Sum(nil) {
+		jitter += int64(c) * int64(math.Pow(10, float64(i)))
+	}
+
+	if lastCheck == nil {
+		lastCheck = ptrTime(processStart)
+	}
+
+	next := lastCheck.
+		Truncate(cfg.CheckDistribution).
+		Add(time.Duration(jitter) % cfg.CheckDistribution)
+
+	if next.Before(*lastCheck) {
+		next = next.Add(cfg.CheckDistribution)
+	}
+
+	return next.Truncate(time.Second)
+}
+
+func ptrTime(t time.Time) *time.Time { return &t }

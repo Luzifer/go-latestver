@@ -20,8 +20,6 @@ type (
 		Fetcher       string                          `json:"-" yaml:"fetcher"`
 		FetcherConfig fieldcollection.FieldCollection `json:"-" yaml:"fetcher_config"`
 
-		CheckInterval time.Duration `json:"-" yaml:"check_interval"`
-
 		Links []CatalogLink `json:"links" yaml:"links"`
 	}
 

@@ -18,19 +18,21 @@ import (
 
 var (
 	cfg = struct {
-		BaseURL        string        `flag:"base-url" default:"https://example.com/" description:"Base-URL the application is reachable at"`
-		Config         string        `flag:"config,c" default:"config.yaml" description:"Configuration file with catalog entries"`
-		Listen         string        `flag:"listen" default:":3000" description:"Port/IP to listen on"`
-		LogLevel       string        `flag:"log-level" default:"info" description:"Log level (debug, info, warn, error, fatal)"`
-		MaxJitter      time.Duration `flag:"max-jitter" default:"30m" description:"Maximum jitter to add to the check interval for load balancing"`
-		Storage        string        `flag:"storage" default:"sqlite" description:"Storage adapter to use (mysql, sqlite)"`
-		StorageDSN     string        `flag:"storage-dsn" default:"file::memory:?cache=shared" description:"DSN to connect to the database"`
-		VersionAndExit bool          `flag:"version" default:"false" description:"Prints current version and exits"`
+		BaseURL           string        `flag:"base-url" default:"https://example.com/" description:"Base-URL the application is reachable at"`
+		Config            string        `flag:"config,c" default:"config.yaml" description:"Configuration file with catalog entries"`
+		Listen            string        `flag:"listen" default:":3000" description:"Port/IP to listen on"`
+		LogLevel          string        `flag:"log-level" default:"info" description:"Log level (debug, info, warn, error, fatal)"`
+		CheckDistribution time.Duration `flag:"check-distribution" default:"1h" description:"Checks are executed at static times every [value]"`
+		Storage           string        `flag:"storage" default:"sqlite" description:"Storage adapter to use (mysql, sqlite)"`
+		StorageDSN        string        `flag:"storage-dsn" default:"file::memory:?cache=shared" description:"DSN to connect to the database"`
+		VersionAndExit    bool          `flag:"version" default:"false" description:"Prints current version and exits"`
 	}{}
 
 	configFile = config.New()
 	router     *mux.Router
 	storage    *database.Client
+
+	processStart = time.Now()
 
 	version = "dev"
 )
