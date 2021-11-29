@@ -33,6 +33,29 @@ func buildFullURL(u *url.URL, _ error) string {
 	}, "/")
 }
 
+func catalogEntryToAPICatalogEntry(ce database.CatalogEntry) (APICatalogEntry, error) {
+	cm, err := storage.Catalog.GetMeta(&ce)
+	if err != nil {
+		return APICatalogEntry{}, errors.Wrap(err, "fetching catalog meta")
+	}
+
+	for _, l := range fetcher.Get(ce.Fetcher).Links(&ce.FetcherConfig) {
+		var found bool
+		for _, el := range ce.Links {
+			if l.Name == el.Name {
+				found = true
+				break
+			}
+		}
+
+		if !found {
+			ce.Links = append(ce.Links, l)
+		}
+	}
+
+	return APICatalogEntry{CatalogEntry: ce, CatalogMeta: *cm}, nil
+}
+
 func handleCatalogGet(w http.ResponseWriter, r *http.Request) {
 	var (
 		vars      = mux.Vars(r)
@@ -45,20 +68,15 @@ func handleCatalogGet(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	cm, err := storage.Catalog.GetMeta(&ce)
+	ae, err := catalogEntryToAPICatalogEntry(ce)
 	if err != nil {
-		log.WithError(err).Error("Unable to fetch catalog meta")
-		http.Error(w, "Unable to fetch catalog meta", http.StatusInternalServerError)
+		log.WithError(err).Error("Unable to fetch catalog data")
+		http.Error(w, "Unable to fetch catalog data", http.StatusInternalServerError)
 		return
 	}
 
-	ce.Links = append(
-		ce.Links,
-		fetcher.Get(ce.Fetcher).Links(&ce.FetcherConfig)...,
-	)
-
 	w.Header().Set("Content-Type", "application/json")
-	if err = json.NewEncoder(w).Encode(APICatalogEntry{CatalogEntry: ce, CatalogMeta: *cm}); err != nil {
+	if err = json.NewEncoder(w).Encode(ae); err != nil {
 		log.WithError(err).Error("Unable to encode catalog entry")
 		http.Error(w, "Unable to encode catalog meta", http.StatusInternalServerError)
 		return
@@ -94,19 +112,14 @@ func handleCatalogList(w http.ResponseWriter, r *http.Request) {
 	for i := range configFile.Catalog {
 		ce := configFile.Catalog[i]
 
-		cm, err := storage.Catalog.GetMeta(&ce)
+		ae, err := catalogEntryToAPICatalogEntry(ce)
 		if err != nil {
-			log.WithError(err).Error("Unable to fetch catalog meta")
-			http.Error(w, "Unable to fetch catalog meta", http.StatusInternalServerError)
+			log.WithError(err).Error("Unable to fetch catalog data")
+			http.Error(w, "Unable to fetch catalog data", http.StatusInternalServerError)
 			return
 		}
 
-		ce.Links = append(
-			ce.Links,
-			fetcher.Get(ce.Fetcher).Links(&ce.FetcherConfig)...,
-		)
-
-		out[i] = APICatalogEntry{CatalogEntry: ce, CatalogMeta: *cm}
+		out[i] = ae
 	}
 
 	w.Header().Set("Content-Type", "application/json")
