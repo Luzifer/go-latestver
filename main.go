@@ -84,11 +84,12 @@ func main() {
 	router.HandleFunc("/v1/catalog/{name}/{tag}/version", handleCatalogGetVersion).Methods(http.MethodGet)
 	router.HandleFunc("/v1/log", handleLog).Methods(http.MethodGet)
 
-	router.HandleFunc("/", nil).Methods(http.MethodGet).Name("catalog")
-	router.HandleFunc("/{name}/{tag}", nil).Methods(http.MethodGet).Name("catalog-entry")
 	router.HandleFunc("/{name}/{tag}/log.rss", handleLogFeed).Methods(http.MethodGet).Name("catalog-entry-rss")
-	router.HandleFunc("/log", nil).Methods(http.MethodGet)
 	router.HandleFunc("/log.rss", handleLogFeed).Methods(http.MethodGet).Name("log-rss")
+
+	router.HandleFunc("/", handleSinglePage).Methods(http.MethodGet).Name("catalog")
+	router.HandleFunc("/{name}/{tag}", handleSinglePage).Methods(http.MethodGet).Name("catalog-entry")
+	router.PathPrefix("/").HandlerFunc(handleSinglePage)
 
 	var handler http.Handler = router
 	handler = httpHelper.GzipHandler(handler)
