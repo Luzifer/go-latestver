@@ -74,7 +74,7 @@ func main() {
 	}
 
 	scheduler := cron.New()
-	scheduler.AddFunc("@every 1m", schedulerRun)
+	scheduler.AddFunc(fmt.Sprintf("@every %s", schedulerInterval), schedulerRun)
 	scheduler.Start()
 
 	router = mux.NewRouter()

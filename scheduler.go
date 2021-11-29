@@ -15,6 +15,8 @@ import (
 	"github.com/Luzifer/go-latestver/internal/fetcher"
 )
 
+const schedulerInterval = time.Minute
+
 var schedulerRunActive bool
 
 func schedulerRun() {
@@ -110,7 +112,7 @@ func nextCheckTime(ce *database.CatalogEntry, lastCheck *time.Time) time.Time {
 		Truncate(cfg.CheckDistribution).
 		Add(time.Duration(jitter) % cfg.CheckDistribution)
 
-	if next.Before(*lastCheck) {
+	if next.Before((*lastCheck).Add(schedulerInterval)) {
 		next = next.Add(cfg.CheckDistribution)
 	}
 
