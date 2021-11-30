@@ -74,7 +74,7 @@ func checkForUpdates(ce *database.CatalogEntry) error {
 		if err = storage.Logs.Add(&database.LogEntry{
 			CatalogName: ce.Name,
 			CatalogTag:  ce.Tag,
-			Timestamp:   vertime,
+			Timestamp:   time.Now().Truncate(time.Second).UTC(),
 			VersionTo:   ver,
 			VersionFrom: cm.CurrentVersion,
 		}); err != nil {
