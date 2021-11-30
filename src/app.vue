@@ -35,6 +35,18 @@
             />
             All Updates
           </b-nav-item>
+
+          <b-nav-item
+            href="https://github.com/Luzifer/go-latestver"
+            rel="noopener noreferrer"
+            target="_blank"
+            title="Go-LatestVer on Github"
+          >
+            <font-awesome-icon
+              fixed-width
+              :icon="['fab', 'github']"
+            />
+          </b-nav-item>
         </b-navbar-nav>
       </b-collapse>
     </b-navbar>

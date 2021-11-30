@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
+	"path"
 	"strconv"
 	"strings"
 	"time"
@@ -54,6 +55,40 @@ func catalogEntryToAPICatalogEntry(ce database.CatalogEntry) (APICatalogEntry, e
 	}
 
 	return APICatalogEntry{CatalogEntry: ce, CatalogMeta: *cm}, nil
+}
+
+func handleBadgeRedirect(w http.ResponseWriter, r *http.Request) {
+	var (
+		compare   = r.FormValue("compare")
+		vars      = mux.Vars(r)
+		name, tag = vars["name"], vars["tag"]
+	)
+
+	ce, err := configFile.CatalogEntryByTag(name, tag)
+	if errors.Is(err, config.ErrCatalogEntryNotFound) {
+		http.Error(w, "Not found", http.StatusNotFound)
+		return
+	}
+
+	cm, err := storage.Catalog.GetMeta(&ce)
+	if err != nil {
+		http.Error(w, "Unable to fetch catalog data", http.StatusInternalServerError)
+		return
+	}
+
+	color := "green"
+	if compare != "" && compare != cm.CurrentVersion {
+		color = "red"
+	}
+
+	target, err := url.Parse(cfg.BadgeGenInstance)
+	if err != nil {
+		http.Error(w, "Misconfigured BadgeGenInstance", http.StatusInternalServerError)
+		return
+	}
+
+	target.Path = path.Join(target.Path, "static", ce.Key(), cm.CurrentVersion, color)
+	http.Redirect(w, r, target.String(), http.StatusFound)
 }
 
 func handleCatalogGet(w http.ResponseWriter, r *http.Request) {

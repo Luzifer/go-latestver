@@ -18,6 +18,7 @@ import (
 
 var (
 	cfg = struct {
+		BadgeGenInstance  string        `flag:"badge-gen-instance" default:"https://badges.fyi/" description:"Where to find the badge-gen instance to use badges from"`
 		BaseURL           string        `flag:"base-url" default:"https://example.com/" description:"Base-URL the application is reachable at"`
 		Config            string        `flag:"config,c" default:"config.yaml" description:"Configuration file with catalog entries"`
 		Listen            string        `flag:"listen" default:":3000" description:"Port/IP to listen on"`
@@ -84,6 +85,7 @@ func main() {
 	router.HandleFunc("/v1/catalog/{name}/{tag}/version", handleCatalogGetVersion).Methods(http.MethodGet)
 	router.HandleFunc("/v1/log", handleLog).Methods(http.MethodGet)
 
+	router.HandleFunc("/{name}/{tag}.svg", handleBadgeRedirect).Methods(http.MethodGet).Name("catalog-entry-badge")
 	router.HandleFunc("/{name}/{tag}/log.rss", handleLogFeed).Methods(http.MethodGet).Name("catalog-entry-rss")
 	router.HandleFunc("/log.rss", handleLogFeed).Methods(http.MethodGet).Name("log-rss")
 
