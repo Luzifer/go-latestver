@@ -24,3 +24,14 @@ Usage of go-latestver:
 ```
 
 To use the `github_release` fetcher without hitting the API limits quite fast provide `GITHUB_CLIENT_ID` and `GITHUB_CLIENT_SECRET` of an [OAuth App](https://github.com/settings/developers) in environment variables.
+
+## Screenshots
+
+### Catalog Index
+![](docs/latestver-catalog-index.png)
+
+### Catalog Entry
+![](docs/latestver-catalog-entry.png)
+
+### Global Changelog
+![](docs/latestver-log.png)
