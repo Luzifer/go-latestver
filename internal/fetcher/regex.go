@@ -13,6 +13,11 @@ import (
 	"github.com/Luzifer/go_helpers/v2/fieldcollection"
 )
 
+/*
+ * @module regex
+ * @module_desc Fetches URL and applies a regular expression to extract a version from it
+ */
+
 const (
 	httpStatus3xx               = 300
 	regexpFetcherExpectedLength = 2
@@ -68,10 +73,12 @@ func (h RegexFetcher) Links(attrs *fieldcollection.FieldCollection) []database.C
 }
 
 func (h RegexFetcher) Validate(attrs *fieldcollection.FieldCollection) error {
+	// @attr url required string "" URL to fetch the content from
 	if v, err := attrs.String("url"); err != nil || v == "" {
 		return errors.New("url is expected to be non-empty string")
 	}
 
+	// @attr regex required string "" Regular expression (RE2) to apply to the text fetched from the URL. The regex MUST have exactly one submatch containing the version.
 	if v, err := attrs.String("regex"); err != nil || v == "" {
 		return errors.New("regex is expected to be non-empty string")
 	}

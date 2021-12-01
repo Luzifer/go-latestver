@@ -15,3 +15,13 @@ node_modules:
 go_test:
 	go test -cover -v ./...
 	golangci-lint run
+
+# --- Documentation
+
+gendoc: .venv
+	.venv/bin/python3 ci/gendoc.py $(shell grep -l '@module ' internal/fetcher/*.go) >docs/config.md
+	git add docs/config.md
+
+.venv:
+	python -m venv .venv
+	.venv/bin/pip install -r ci/requirements.txt

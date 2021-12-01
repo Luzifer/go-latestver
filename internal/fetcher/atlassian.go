@@ -16,6 +16,11 @@ import (
 	"github.com/Luzifer/go_helpers/v2/fieldcollection"
 )
 
+/*
+ * @module atlassian
+ * @module_desc Fetches latest version of an Atlassian product
+ */
+
 var (
 	atlassianDefaultEdition = ""
 	atlassianDefaultSearch  = "TAR.GZ"
@@ -76,8 +81,10 @@ func (a AtlassianFetcher) FetchVersion(ctx context.Context, attrs *fieldcollecti
 	})
 
 	var (
+		// @attr edition optional string "" Filter down the versions according to its edition (e.g. "Enterprise" or "Standard" for Confluence)
 		edition = attrs.MustString("edition", &atlassianDefaultEdition)
-		search  = attrs.MustString("search", &atlassianDefaultSearch)
+		// @attr search optional string "TAR.GZ" What to search in the download description: default is to search for the standalone .tar.gz file
+		search = attrs.MustString("search", &atlassianDefaultSearch)
 	)
 
 	for _, r := range payload {
@@ -101,6 +108,7 @@ func (AtlassianFetcher) Links(attrs *fieldcollection.FieldCollection) []database
 }
 
 func (AtlassianFetcher) Validate(attrs *fieldcollection.FieldCollection) error {
+	// @attr product required string "" Lowercase name of the product to fetch (e.g. confluence, crowd, jira-software, ...)
 	if v, err := attrs.String("product"); err != nil || v == "" {
 		return errors.New("product is expected to be non-empty string")
 	}

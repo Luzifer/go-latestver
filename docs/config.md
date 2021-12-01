@@ -1,0 +1,84 @@
+# Configuration file format
+
+```yaml
+---
+
+catalog:
+
+  - name: alpine
+    tag: stable
+
+    fetcher: html
+    fetcher_config:
+      url: https://alpinelinux.org/downloads/
+      xpath: '//div[@class="l-box"]/p/strong'
+
+check_interval: 1h
+
+...
+```
+
+Each catalog entry contains a `name` and a `tag` representing the entry. You can choose those freely but they should be URL-safe. Some examples I'm using are: `alpine:stable`, `google-chrome:dev`, `google-chrome:stable`, `factorio:latest`, …
+
+Additionally you will configure a `fetcher` with its corresponding `fetcher_config` for the catalog entry. In the example above the `html` fetcher is used with two attributes configured. The attributes for each fetcher can be found below.
+
+## Available Fetchers
+
+## Fetcher: `atlassian`
+
+Fetches latest version of an Atlassian product
+
+| Attribute | Req. | Type | Default Value | Description |
+| --------- | :--: | ---- | ------------- | ----------- |
+| `product` | ✅ | string |  | Lowercase name of the product to fetch (e.g. confluence, crowd, jira-software, ...) |
+| `edition` |  | string |  | Filter down the versions according to its edition (e.g. "Enterprise" or "Standard" for Confluence) |
+| `search` |  | string | `TAR.GZ` | What to search in the download description: default is to search for the standalone .tar.gz file |
+
+## Fetcher: `git_tag`
+
+Reads git tags (annotated and leightweight) from a remote repository and returns the newest one
+
+| Attribute | Req. | Type | Default Value | Description |
+| --------- | :--: | ---- | ------------- | ----------- |
+| `remote` | ✅ | string |  | Repository remote to fetch the tags from (should accept everything you can use in `git remote set-url` command) |
+
+## Fetcher: `github_release`
+
+Fetches the latest release from Github for a given repository not marked as pre-release
+
+| Attribute | Req. | Type | Default Value | Description |
+| --------- | :--: | ---- | ------------- | ----------- |
+| `repository` | ✅ | string |  | Repository to fetch in form `owner/repo` |
+
+## Fetcher: `html`
+
+Downloads website, selects text-node using XPath and optionally applies custom regular expression
+
+| Attribute | Req. | Type | Default Value | Description |
+| --------- | :--: | ---- | ------------- | ----------- |
+| `url` | ✅ | string |  | URL to fetch the HTML from |
+| `xpath` | ✅ | string |  | XPath expression leading to the text-node containing the version |
+| `regex` |  | string | `(v?(?:[0-9]+\.?){2,})` | Regular expression to apply to the text from the XPath expression |
+
+## Fetcher: `json`
+
+Fetches a JSON / JSONP file from remote source and traverses it using XPath expression
+
+| Attribute | Req. | Type | Default Value | Description |
+| --------- | :--: | ---- | ------------- | ----------- |
+| `url` | ✅ | string |  | URL to fetch the HTML from |
+| `xpath` | ✅ | string |  | XPath expression leading to the text-node containing the version |
+| `jsonp` |  | boolean | `false` | File contains JSONP function, strip it to get the raw JSON |
+
+## Fetcher: `regex`
+
+Fetches URL and applies a regular expression to extract a version from it
+
+| Attribute | Req. | Type | Default Value | Description |
+| --------- | :--: | ---- | ------------- | ----------- |
+| `regex` | ✅ | string |  | Regular expression (RE2) to apply to the text fetched from the URL. The regex MUST have exactly one submatch containing the version. |
+| `url` | ✅ | string |  | URL to fetch the content from |
+
+
+
+<!-- vim: set ft=markdown : -->

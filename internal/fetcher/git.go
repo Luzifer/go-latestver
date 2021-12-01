@@ -14,6 +14,11 @@ import (
 	"github.com/Luzifer/go_helpers/v2/fieldcollection"
 )
 
+/*
+ * @module git_tag
+ * @module_desc Reads git tags (annotated and leightweight) from a remote repository and returns the newest one
+ */
+
 type (
 	GitTagFetcher struct{}
 )
@@ -79,6 +84,7 @@ func (g GitTagFetcher) Links(attrs *fieldcollection.FieldCollection) []database.
 }
 
 func (g GitTagFetcher) Validate(attrs *fieldcollection.FieldCollection) error {
+	// @attr remote required string "" Repository remote to fetch the tags from (should accept everything you can use in `git remote set-url` command)
 	if v, err := attrs.String("remote"); err != nil || v == "" {
 		return errors.New("remote is expected to be non-empty string")
 	}

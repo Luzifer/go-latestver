@@ -23,6 +23,8 @@ Usage of go-latestver:
       --version                       Prints current version and exits
 ```
 
+The documentation for the format of the `config` file can be found in the [`docs/config.md`](docs/config.md) file.
+
 To use the `github_release` fetcher without hitting the API limits quite fast provide `GITHUB_CLIENT_ID` and `GITHUB_CLIENT_SECRET` of an [OAuth App](https://github.com/settings/developers) in environment variables.
 
 ## Screenshots

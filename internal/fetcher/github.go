@@ -14,6 +14,11 @@ import (
 	"github.com/Luzifer/go_helpers/v2/fieldcollection"
 )
 
+/*
+ * @module github_release
+ * @module_desc Fetches the latest release from Github for a given repository not marked as pre-release
+ */
+
 const githubHTTPTimeout = 2 * time.Second
 
 type (
@@ -91,6 +96,7 @@ func (g GithubReleaseFetcher) Links(attrs *fieldcollection.FieldCollection) []da
 }
 
 func (g GithubReleaseFetcher) Validate(attrs *fieldcollection.FieldCollection) error {
+	// @attr repository required string "" Repository to fetch in form `owner/repo`
 	if v, err := attrs.String("repository"); err != nil || v == "" {
 		return errors.New("repository is expected to be non-empty string")
 	}

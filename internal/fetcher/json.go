@@ -16,6 +16,11 @@ import (
 	"github.com/Luzifer/go_helpers/v2/fieldcollection"
 )
 
+/*
+ * @module json
+ * @module_desc Fetches a JSON / JSONP file from remote source and traverses it using XPath expression
+ */
+
 var (
 	jsonFetcherDefaultRegex = `(v?(?:[0-9]+\.?){2,})`
 	jsonpStripRegex         = regexp.MustCompile(`(?m)^[^\(]+\((.*)\)$`)
@@ -34,6 +39,7 @@ func (JSONFetcher) FetchVersion(ctx context.Context, attrs *fieldcollection.Fiel
 		err error
 	)
 
+	// @attr jsonp optional boolean "false" File contains JSONP function, strip it to get the raw JSON
 	if attrs.MustBool("jsonp", ptrBoolFalse) {
 		var (
 			body []byte
@@ -98,10 +104,12 @@ func (JSONFetcher) FetchVersion(ctx context.Context, attrs *fieldcollection.Fiel
 func (JSONFetcher) Links(attrs *fieldcollection.FieldCollection) []database.CatalogLink { return nil }
 
 func (JSONFetcher) Validate(attrs *fieldcollection.FieldCollection) error {
+	// @attr url required string "" URL to fetch the HTML from
 	if v, err := attrs.String("url"); err != nil || v == "" {
 		return errors.New("url is expected to be non-empty string")
 	}
 
+	// @attr xpath required string "" XPath expression leading to the text-node containing the version
 	if v, err := attrs.String("xpath"); err != nil || v == "" {
 		return errors.New("xpath is expected to be non-empty string")
 	}

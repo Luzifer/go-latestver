@@ -14,6 +14,11 @@ import (
 	"github.com/Luzifer/go_helpers/v2/fieldcollection"
 )
 
+/*
+ * @module html
+ * @module_desc Downloads website, selects text-node using XPath and optionally applies custom regular expression
+ */
+
 var htmlFetcherDefaultRegex = `(v?(?:[0-9]+\.?){2,})`
 
 type (
@@ -64,10 +69,12 @@ func (h HTMLFetcher) Links(attrs *fieldcollection.FieldCollection) []database.Ca
 }
 
 func (h HTMLFetcher) Validate(attrs *fieldcollection.FieldCollection) error {
+	// @attr url required string "" URL to fetch the HTML from
 	if v, err := attrs.String("url"); err != nil || v == "" {
 		return errors.New("url is expected to be non-empty string")
 	}
 
+	// @attr xpath required string "" XPath expression leading to the text-node containing the version
 	if v, err := attrs.String("xpath"); err != nil || v == "" {
 		return errors.New("xpath is expected to be non-empty string")
 	}
@@ -76,6 +83,7 @@ func (h HTMLFetcher) Validate(attrs *fieldcollection.FieldCollection) error {
 		return errors.Wrap(err, "compiling xpath expression")
 	}
 
+	// @attr regex optional string "(v?(?:[0-9]+\.?){2,})" Regular expression to apply to the text from the XPath expression
 	if attrs.CanString("regex") {
 		if _, err := regexp.Compile(attrs.MustString("regex", nil)); err != nil {
 			return errors.Wrap(err, "invalid regex given")
