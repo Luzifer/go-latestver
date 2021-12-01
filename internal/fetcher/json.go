@@ -35,18 +35,23 @@ func (JSONFetcher) FetchVersion(ctx context.Context, attrs *fieldcollection.Fiel
 	)
 
 	if attrs.MustBool("jsonp", ptrBoolFalse) {
-		req, err := http.NewRequestWithContext(ctx, http.MethodGet, attrs.MustString("url", nil), nil)
+		var (
+			body []byte
+			req  *http.Request
+			resp *http.Response
+		)
+		req, err = http.NewRequestWithContext(ctx, http.MethodGet, attrs.MustString("url", nil), nil)
 		if err != nil {
 			return "", time.Time{}, errors.Wrap(err, "creating request")
 		}
 
-		resp, err := http.DefaultClient.Do(req)
+		resp, err = http.DefaultClient.Do(req)
 		if err != nil {
 			return "", time.Time{}, errors.Wrap(err, "executing request")
 		}
 		defer resp.Body.Close()
 
-		body, err := ioutil.ReadAll(resp.Body)
+		body, err = ioutil.ReadAll(resp.Body)
 		if err != nil {
 			return "", time.Time{}, errors.Wrap(err, "reading response body")
 		}
@@ -83,7 +88,7 @@ func (JSONFetcher) FetchVersion(ctx context.Context, attrs *fieldcollection.Fiel
 	}
 
 	match := regexp.MustCompile(attrs.MustString("regex", &jsonFetcherDefaultRegex)).FindStringSubmatch(node.Data)
-	if len(match) < 2 {
+	if len(match) < 2 { //nolint:gomnd // Simple count of fields, no need for constant
 		return "", time.Time{}, errors.New("regular expression did not yield version")
 	}
 

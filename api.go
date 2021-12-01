@@ -40,7 +40,7 @@ func catalogEntryToAPICatalogEntry(ce database.CatalogEntry) (APICatalogEntry, e
 		return APICatalogEntry{}, errors.Wrap(err, "fetching catalog meta")
 	}
 
-	for _, l := range fetcher.Get(ce.Fetcher).Links(&ce.FetcherConfig) {
+	for _, l := range fetcher.Get(ce.Fetcher).Links(ce.FetcherConfig) {
 		var found bool
 		for _, el := range ce.Links {
 			if l.Name == el.Name {
@@ -239,6 +239,7 @@ func prepareLogForRequest(r *http.Request) ([]database.LogEntry, error) {
 
 		num, page = 25, 0
 
+		ce   database.CatalogEntry
 		err  error
 		logs []database.LogEntry
 	)
@@ -254,7 +255,7 @@ func prepareLogForRequest(r *http.Request) ([]database.LogEntry, error) {
 	if name == "" && tag == "" {
 		logs, err = storage.Logs.List(num, page)
 	} else {
-		ce, err := configFile.CatalogEntryByTag(name, tag)
+		ce, err = configFile.CatalogEntryByTag(name, tag)
 		if errors.Is(err, config.ErrCatalogEntryNotFound) {
 			return nil, config.ErrCatalogEntryNotFound
 		}

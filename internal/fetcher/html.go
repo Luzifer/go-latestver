@@ -46,7 +46,7 @@ func (h HTMLFetcher) FetchVersion(ctx context.Context, attrs *fieldcollection.Fi
 	}
 
 	match := regexp.MustCompile(attrs.MustString("regex", &htmlFetcherDefaultRegex)).FindStringSubmatch(node.Data)
-	if len(match) < 2 {
+	if len(match) < 2 { //nolint:gomnd // Simple count of fields, no need for constant
 		return "", time.Time{}, errors.New("regular expression did not yield version")
 	}
 

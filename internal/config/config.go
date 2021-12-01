@@ -57,7 +57,7 @@ func (f File) ValidateCatalog() error {
 			return errors.Errorf("catalog entry %d has unknown fetcher", i)
 		}
 
-		if err := f.Validate(&ce.FetcherConfig); err != nil {
+		if err := f.Validate(ce.FetcherConfig); err != nil {
 			return errors.Wrapf(err, "catalog entry %d has invalid fetcher config", i)
 		}
 	}

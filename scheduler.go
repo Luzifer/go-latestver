@@ -2,7 +2,7 @@ package main
 
 import (
 	"context"
-	"crypto/md5"
+	"crypto/md5" //#nosec G501 // Used to derive a static jitter checksum, not cryptographically
 	"fmt"
 	"math"
 	"strings"
@@ -26,7 +26,8 @@ func schedulerRun() {
 	schedulerRunActive = true
 	defer func() { schedulerRunActive = false }()
 
-	for _, ce := range configFile.Catalog {
+	for i := range configFile.Catalog {
+		ce := configFile.Catalog[i]
 		if err := checkForUpdates(&ce); err != nil {
 			log.WithField("entry", ce.Key()).WithError(err).Error("Unable to update entry")
 		}
@@ -54,7 +55,7 @@ func checkForUpdates(ce *database.CatalogEntry) error {
 
 	logger.Debug("Checking for updates")
 
-	ver, vertime, err := fetcher.Get(ce.Fetcher).FetchVersion(context.Background(), &ce.FetcherConfig)
+	ver, vertime, err := fetcher.Get(ce.Fetcher).FetchVersion(context.Background(), ce.FetcherConfig)
 	ver = strings.TrimPrefix(ver, "v")
 	vertime = vertime.Truncate(time.Second).UTC()
 
@@ -100,19 +101,19 @@ func nextCheckTime(ce *database.CatalogEntry, lastCheck *time.Time) time.Time {
 		return time.Now()
 	}
 
-	hash := md5.New()
+	hash := md5.New() //#nosec G401 // Used to derive a static jitter checksum, not cryptographically
 	fmt.Fprint(hash, ce.Key())
 
 	var jitter int64
 	for i, c := range hash.Sum(nil) {
-		jitter += int64(c) * int64(math.Pow(10, float64(i)))
+		jitter += int64(c) * int64(math.Pow(10, float64(i))) //nolint:gomnd // No need for constant here
 	}
 
 	next := lastCheck.
 		Truncate(cfg.CheckDistribution).
 		Add(time.Duration(jitter) % cfg.CheckDistribution)
 
-	if next.Before((*lastCheck).Add(schedulerInterval)) {
+	if next.Before(lastCheck.Add(schedulerInterval)) {
 		next = next.Add(cfg.CheckDistribution)
 	}
 

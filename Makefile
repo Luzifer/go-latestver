@@ -11,3 +11,7 @@ lint: node_modules
 
 node_modules:
 	npm ci
+
+go_test:
+	go test -cover -v ./...
+	golangci-lint run

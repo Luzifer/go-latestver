@@ -33,8 +33,6 @@ var (
 	router     *mux.Router
 	storage    *database.Client
 
-	processStart = time.Now()
-
 	version = "dev"
 )
 

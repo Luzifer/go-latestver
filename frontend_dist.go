@@ -11,5 +11,5 @@ var (
 	//go:embed frontend/**
 	embeddedFrontend embed.FS
 
-	frontendFS http.FileSystem = http.FS(embeddedFrontend)
+	frontendFS = http.FS(embeddedFrontend)
 )

@@ -101,6 +101,7 @@ func Test_LogStorage(t *testing.T) {
 		{CatalogName: "anotherapp", CatalogTag: ce.Tag, Timestamp: rt.Add(-2 * time.Hour), VersionFrom: "5.2.0", VersionTo: "5.2.1"},
 		{CatalogName: "anotherapp", CatalogTag: ce.Tag, Timestamp: rt.Add(-1 * time.Hour), VersionFrom: "5.2.1", VersionTo: "6.0.0"},
 	} {
+		//#nosec G601 // Acceptable for test usage
 		if err = dbc.Logs.Add(&le); err != nil {
 			t.Fatalf("unable to add log entry: %s", err)
 		}

@@ -17,17 +17,17 @@ type (
 		Links(attrs *fieldcollection.FieldCollection) []database.CatalogLink
 		Validate(attrs *fieldcollection.FieldCollection) error
 	}
-	FetcherCreate func() Fetcher
+	Create func() Fetcher
 )
 
 var (
 	ErrNoVersionFound = errors.New("no version found")
 
-	availableFetchers     = map[string]FetcherCreate{}
+	availableFetchers     = map[string]Create{}
 	availableFetchersLock sync.RWMutex
 )
 
-func registerFetcher(name string, fn FetcherCreate) {
+func registerFetcher(name string, fn Create) {
 	availableFetchersLock.Lock()
 	defer availableFetchersLock.Unlock()
 

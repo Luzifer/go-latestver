@@ -1,7 +1,6 @@
 package database
 
 import (
-	_ "embed"
 	"strings"
 	"time"
 
@@ -17,8 +16,8 @@ type (
 		Name string `json:"name" yaml:"name"`
 		Tag  string `json:"tag" yaml:"tag"`
 
-		Fetcher       string                          `json:"-" yaml:"fetcher"`
-		FetcherConfig fieldcollection.FieldCollection `json:"-" yaml:"fetcher_config"`
+		Fetcher       string                           `json:"-" yaml:"fetcher"`
+		FetcherConfig *fieldcollection.FieldCollection `json:"-" yaml:"fetcher_config"`
 
 		Links []CatalogLink `json:"links" yaml:"links"`
 	}
