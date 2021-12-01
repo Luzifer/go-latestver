@@ -27,7 +27,7 @@ Each catalog entry contains a `name` and a `tag` representing the entry. You can
 
 Additionally you will configure a `fetcher` with its corresponding `fetcher_config` for the catalog entry. In the example above the `html` fetcher is used with two attributes configured. The attributes for each fetcher can be found below.
 
-You can provide your own `links` for each catalog entry which will be added to or override the links returned from the fetcher. If you provide the same `name` as the fetcher uses the link of the fetcher will be overridden. The `icon_class` should consist of `fas` or `fab` and an icon (for example `fa-global`). You can use all **solid** (`fas`) or **breand** (`fab`) icons within [Font Awesome v5 Free](https://fontawesome.com/v5.15/icons?d=gallery&s=brands,solid&m=free).
+You can provide your own `links` for each catalog entry which will be added to or override the links returned from the fetcher. If you provide the same `name` as the fetcher uses the link of the fetcher will be overridden. The `icon_class` should consist of `fas` or `fab` and an icon (for example `fa-globe`). You can use all **solid** (`fas`) or **breand** (`fab`) icons within [Font Awesome v5 Free](https://fontawesome.com/v5.15/icons?d=gallery&s=brands,solid&m=free).
 
 ## Available Fetchers
 
