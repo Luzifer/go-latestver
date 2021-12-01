@@ -21,7 +21,7 @@ export default {
 
   methods: {
     fetchLog() {
-      axios.get('/v1/log')
+      axios.get('/v1/log?num=50')
         .then(resp => {
           this.logs = resp.data
         })
