@@ -8,6 +8,7 @@ import (
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 
+	"github.com/Luzifer/go-latestver/internal/version"
 	"github.com/Luzifer/go_helpers/v2/fieldcollection"
 )
 
@@ -18,6 +19,8 @@ type (
 
 		Fetcher       string                           `json:"-" yaml:"fetcher"`
 		FetcherConfig *fieldcollection.FieldCollection `json:"-" yaml:"fetcher_config"`
+
+		VersionConstraint *version.Constraint `json:"-" yaml:"version_constraint"`
 
 		Links []CatalogLink `json:"links" yaml:"links"`
 	}

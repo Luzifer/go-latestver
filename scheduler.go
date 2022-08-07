@@ -59,18 +59,35 @@ func checkForUpdates(ce *database.CatalogEntry) error {
 	ver = strings.TrimPrefix(ver, "v")
 	vertime = vertime.Truncate(time.Second).UTC()
 
+	logger = logger.WithFields(log.Fields{
+		"from": cm.CurrentVersion,
+		"to":   ver,
+	})
+
+	var (
+		compareErr   error
+		shouldUpdate = true
+	)
+	if ce.VersionConstraint != nil {
+		shouldUpdate, compareErr = ce.VersionConstraint.ShouldApply(cm.CurrentVersion, ver)
+	}
+
 	switch {
 
 	case err != nil:
-		log.WithField("entry", ce.Key()).WithError(err).Error("Fetcher caused error, error is stored in entry")
+		logger.WithError(err).Error("Fetcher caused error, error is stored in entry")
 		cm.Error = err.Error()
 
-	case cm.CurrentVersion != ver:
+	case compareErr != nil:
+		logger.WithError(err).Error("Version compare caused error, error is stored in entry")
+		cm.Error = compareErr.Error()
 
-		logger.WithFields(log.Fields{
-			"from": cm.CurrentVersion,
-			"to":   ver,
-		}).Info("Entry had version update")
+	case cm.CurrentVersion != ver && !shouldUpdate:
+		logger.Info("Version-updated prevented by constraints")
+		cm.Error = ""
+
+	case cm.CurrentVersion != ver && shouldUpdate:
+		logger.Info("Entry had version update")
 
 		if err = storage.Logs.Add(&database.LogEntry{
 			CatalogName: ce.Name,
@@ -84,7 +101,11 @@ func checkForUpdates(ce *database.CatalogEntry) error {
 
 		cm.VersionTime = ptrTime(vertime)
 		cm.CurrentVersion = ver
-		fallthrough
+		cm.Error = ""
+
+	case cm.CurrentVersion == ver:
+		logger.Debug("Version did not change")
+		cm.Error = ""
 
 	default:
 		cm.Error = ""
