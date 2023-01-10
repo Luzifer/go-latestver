@@ -26,6 +26,11 @@ const (
 )
 
 func (c Constraint) ShouldApply(oldVersion, newVersion string) (bool, error) {
+	if oldVersion == "" && newVersion != "" {
+		// The old version does not exist, the new one does, update it!
+		return true, nil
+	}
+
 	comp := c.getComparer()
 	if comp == nil {
 		return false, errors.New("invalid version type specified")

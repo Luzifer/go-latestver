@@ -79,7 +79,7 @@ func checkForUpdates(ce *database.CatalogEntry) error {
 		cm.Error = err.Error()
 
 	case compareErr != nil:
-		logger.WithError(err).Error("Version compare caused error, error is stored in entry")
+		logger.WithError(compareErr).Error("Version compare caused error, error is stored in entry")
 		cm.Error = compareErr.Error()
 
 	case cm.CurrentVersion != ver && !shouldUpdate:
