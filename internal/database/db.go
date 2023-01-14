@@ -24,6 +24,10 @@ type (
 	logwrap struct {
 		l *io.PipeWriter
 	}
+
+	migrator interface {
+		Migrate(dest *Client) error
+	}
 )
 
 func NewClient(dbtype, dsn string) (*Client, error) {
@@ -69,6 +73,19 @@ func NewClient(dbtype, dsn string) (*Client, error) {
 	}
 
 	return c, nil
+}
+
+func (c Client) Migrate(dest *Client) error {
+	for _, m := range []migrator{
+		c.Catalog,
+		c.Logs,
+	} {
+		if err := m.Migrate(dest); err != nil {
+			return errors.Wrap(err, "executing migrating")
+		}
+	}
+
+	return nil
 }
 
 func (c Client) initDB() error {

@@ -77,6 +77,21 @@ func (c CatalogMetaStore) GetMeta(ce *CatalogEntry) (*CatalogMeta, error) {
 	return out, errors.Wrap(err, "querying metadata")
 }
 
+func (c CatalogMetaStore) Migrate(dest *Client) error {
+	var metas []*CatalogMeta
+	if err := c.c.db.Find(&metas).Error; err != nil {
+		return errors.Wrap(err, "listing meta entries")
+	}
+
+	for _, m := range metas {
+		if err := dest.Catalog.PutMeta(m); err != nil {
+			return errors.Wrap(err, "storing meta to dest database")
+		}
+	}
+
+	return nil
+}
+
 func (c CatalogMetaStore) PutMeta(cm *CatalogMeta) error {
 	return errors.Wrap(
 		c.c.db.Clauses(clause.OnConflict{UpdateAll: true}).Create(cm).Error,
@@ -101,6 +116,21 @@ func (l LogStore) List(num, page int) ([]LogEntry, error) {
 
 func (l LogStore) ListForCatalogEntry(ce *CatalogEntry, num, page int) ([]LogEntry, error) {
 	return l.listWithFilter(l.c.db.Where(&LogEntry{CatalogName: ce.Name, CatalogTag: ce.Tag}), num, page)
+}
+
+func (l LogStore) Migrate(dest *Client) error {
+	var logs []*LogEntry
+	if err := l.c.db.Find(&logs).Error; err != nil {
+		return errors.Wrap(err, "listing log entries")
+	}
+
+	for _, l := range logs {
+		if err := dest.Logs.Add(l); err != nil {
+			return errors.Wrap(err, "storing log to dest database")
+		}
+	}
+
+	return nil
 }
 
 func (l LogStore) listWithFilter(filter *gorm.DB, num, page int) ([]LogEntry, error) {
