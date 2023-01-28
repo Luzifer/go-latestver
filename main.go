@@ -12,6 +12,7 @@ import (
 
 	"github.com/Luzifer/go-latestver/internal/config"
 	"github.com/Luzifer/go-latestver/internal/database"
+	fileHelper "github.com/Luzifer/go_helpers/v2/file"
 	httpHelper "github.com/Luzifer/go_helpers/v2/http"
 	"github.com/Luzifer/rconfig/v2"
 )
@@ -67,6 +68,12 @@ func main() {
 		log.WithError(err).Fatal("Configuration is not valid")
 	}
 
+	fsWatch, err := fileHelper.NewSimpleWatcher(cfg.Config, time.Minute)
+	if err != nil {
+		log.WithError(err).Fatal("creating config file watcher")
+	}
+	go reloadConfigOnChange(fsWatch)
+
 	storage, err = database.NewClient(cfg.Storage, cfg.StorageDSN)
 	if err != nil {
 		log.WithError(err).Fatal("Unable to connect to database")
@@ -97,5 +104,27 @@ func main() {
 
 	if err := http.ListenAndServe(cfg.Listen, handler); err != nil {
 		log.WithError(err).Fatal("HTTP server exited unclean")
+	}
+}
+
+func reloadConfigOnChange(fsWatch *fileHelper.Watcher) {
+	for evt := range fsWatch.C {
+		if evt == fileHelper.WatcherEventFileVanished || evt == fileHelper.WatcherEventInvalid {
+			continue
+		}
+
+		tmpCfg := config.New()
+		if err := tmpCfg.Load(cfg.Config); err != nil {
+			log.WithError(err).Error("loading config on fs-event")
+			continue
+		}
+
+		if err := tmpCfg.ValidateCatalog(); err != nil {
+			log.WithError(err).Error("validating config on fs-event")
+			continue
+		}
+
+		configFile = tmpCfg
+		log.Info("reloaded config on fs-event")
 	}
 }
