@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"net/url"
 	"path"
+	"sort"
 	"strconv"
 	"strings"
 	"time"
@@ -156,6 +157,8 @@ func handleCatalogList(w http.ResponseWriter, r *http.Request) {
 
 		out[i] = ae
 	}
+
+	sort.Slice(out, func(i, j int) bool { return out[i].Key() < out[j].Key() })
 
 	w.Header().Set("Content-Type", "application/json")
 	if err := json.NewEncoder(w).Encode(out); err != nil {
