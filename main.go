@@ -28,6 +28,7 @@ var (
 		Storage           string        `flag:"storage" default:"sqlite" description:"Storage adapter to use (mysql, sqlite)"`
 		StorageDSN        string        `flag:"storage-dsn" default:"file::memory:?cache=shared" description:"DSN to connect to the database"`
 		VersionAndExit    bool          `flag:"version" default:"false" description:"Prints current version and exits"`
+		WatchConfig       bool          `flag:"watch-config" default:"true" description:"Whether to watch the config file for changes"`
 	}{}
 
 	configFile = config.New()
@@ -68,11 +69,13 @@ func main() {
 		log.WithError(err).Fatal("Configuration is not valid")
 	}
 
-	fsWatch, err := fileHelper.NewSimpleWatcher(cfg.Config, time.Minute)
-	if err != nil {
-		log.WithError(err).Fatal("creating config file watcher")
+	if cfg.WatchConfig {
+		fsWatch, err := fileHelper.NewSimpleWatcher(cfg.Config, time.Minute)
+		if err != nil {
+			log.WithError(err).Fatal("creating config file watcher")
+		}
+		go reloadConfigOnChange(fsWatch)
 	}
-	go reloadConfigOnChange(fsWatch)
 
 	storage, err = database.NewClient(cfg.Storage, cfg.StorageDSN)
 	if err != nil {
