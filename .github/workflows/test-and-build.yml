@@ -1,0 +1,48 @@
+---
+
+name: test-and-build
+on:
+  push:
+    branches: ['*']
+    tags: ['v*']
+
+permissions:
+  contents: write
+
+jobs:
+  test-and-build:
+    defaults:
+      run:
+        shell: bash
+
+    container:
+      image: luzifer/archlinux
+      env:
+        CGO_ENABLED: 1
+        GOPATH: /go
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Enable custom AUR package repo
+        run: echo -e "[luzifer]\nSigLevel = Never\nServer = https://s3-eu-west-1.amazonaws.com/arch-luzifer-io/repo/\$arch" >>/etc/pacman.conf
+
+      - name: Install required packages
+        run: |
+          pacman -Syy --noconfirm \
+            base-devel \
+            git \
+            go \
+            golangci-lint-bin \
+            sqlite3
+
+      - uses: actions/checkout@v3
+
+      - name: Marking workdir safe
+        run: git config --global --add safe.directory /__w/go-latestver/go-latestver
+
+      - name: Lint and test code
+        run: |
+          make go_test
+
+...
