@@ -1,3 +1,11 @@
+# 0.4.0 / 2023-03-18
+
+  * Allow to disable filesystem watcher
+  * Sort entries in catalog api
+  * Update dependencies
+  * Lint: Update linter config, fix all linter issues
+  * CI: Replace repo-runner tests with Github Actions
+
 # 0.3.0 / 2023-01-28
 
   * Add filesystem-watcher to reload config on change
