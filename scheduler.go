@@ -73,7 +73,6 @@ func checkForUpdates(ce *database.CatalogEntry) error {
 	}
 
 	switch {
-
 	case err != nil:
 		logger.WithError(err).Error("Fetcher caused error, error is stored in entry")
 		cm.Error = err.Error()
@@ -109,7 +108,6 @@ func checkForUpdates(ce *database.CatalogEntry) error {
 
 	default:
 		cm.Error = ""
-
 	}
 
 	cm.LastChecked = ptrTime(time.Now().Truncate(time.Second).UTC())

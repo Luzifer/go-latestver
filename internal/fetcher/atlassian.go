@@ -4,7 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"sort"
 	"strings"
@@ -13,6 +13,7 @@ import (
 	"github.com/pkg/errors"
 
 	"github.com/Luzifer/go-latestver/internal/database"
+	"github.com/Luzifer/go-latestver/internal/helpers"
 	"github.com/Luzifer/go_helpers/v2/fieldcollection"
 )
 
@@ -27,12 +28,14 @@ var (
 )
 
 type (
+	// AtlassianFetcher implements the fetcher interface to monitor Atlassian products
 	AtlassianFetcher struct{}
 )
 
 func init() { registerFetcher("atlassian", func() Fetcher { return &AtlassianFetcher{} }) }
 
-func (a AtlassianFetcher) FetchVersion(ctx context.Context, attrs *fieldcollection.FieldCollection) (string, time.Time, error) {
+// FetchVersion retrieves the latest version for the catalog entry
+func (AtlassianFetcher) FetchVersion(ctx context.Context, attrs *fieldcollection.FieldCollection) (string, time.Time, error) {
 	url := fmt.Sprintf("https://my.atlassian.com/download/feeds/current/%s.json", attrs.MustString("product", nil))
 
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
@@ -44,9 +47,9 @@ func (a AtlassianFetcher) FetchVersion(ctx context.Context, attrs *fieldcollecti
 	if err != nil {
 		return "", time.Time{}, errors.Wrap(err, "executing request")
 	}
-	defer resp.Body.Close()
+	defer func() { helpers.LogIfErr(resp.Body.Close(), "closing response body after read") }()
 
-	body, err := ioutil.ReadAll(resp.Body)
+	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return "", time.Time{}, errors.Wrap(err, "reading response body")
 	}
@@ -103,10 +106,12 @@ func (a AtlassianFetcher) FetchVersion(ctx context.Context, attrs *fieldcollecti
 	return "", time.Time{}, ErrNoVersionFound
 }
 
-func (AtlassianFetcher) Links(attrs *fieldcollection.FieldCollection) []database.CatalogLink {
+// Links retrieves a collection of links for the fetcher
+func (AtlassianFetcher) Links(_ *fieldcollection.FieldCollection) []database.CatalogLink {
 	return nil
 }
 
+// Validate validates the configuration given to the fetcher
 func (AtlassianFetcher) Validate(attrs *fieldcollection.FieldCollection) error {
 	// @attr product required string "" Lowercase name of the product to fetch (e.g. confluence, crowd, jira-software, ...)
 	if v, err := attrs.String("product"); err != nil || v == "" {

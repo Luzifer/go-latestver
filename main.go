@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/gorilla/mux"
+	"github.com/pkg/errors"
 	"github.com/robfig/cron/v3"
 	log "github.com/sirupsen/logrus"
 
@@ -38,28 +39,31 @@ var (
 	version = "dev"
 )
 
-func initApp() {
+func initApp() error {
 	rconfig.AutoEnv(true)
 	if err := rconfig.ParseAndValidate(&cfg); err != nil {
-		log.Fatalf("Unable to parse commandline options: %s", err)
+		return errors.Wrap(err, "parsing commandline options")
+	}
+
+	l, err := log.ParseLevel(cfg.LogLevel)
+	if err != nil {
+		return errors.Wrap(err, "parsing log-level")
+	}
+	log.SetLevel(l)
+
+	return nil
+}
+
+func main() {
+	var err error
+	if err = initApp(); err != nil {
+		log.WithError(err).Fatal("initializing app")
 	}
 
 	if cfg.VersionAndExit {
 		fmt.Printf("go-latestver %s\n", version)
 		os.Exit(0)
 	}
-
-	if l, err := log.ParseLevel(cfg.LogLevel); err != nil {
-		log.WithError(err).Fatal("Unable to parse log level")
-	} else {
-		log.SetLevel(l)
-	}
-}
-
-func main() {
-	initApp()
-
-	var err error
 
 	if err = configFile.Load(cfg.Config); err != nil {
 		log.WithError(err).Fatal("Unable to load configuration")
@@ -83,7 +87,9 @@ func main() {
 	}
 
 	scheduler := cron.New()
-	scheduler.AddFunc(fmt.Sprintf("@every %s", schedulerInterval), schedulerRun)
+	if _, err = scheduler.AddFunc(fmt.Sprintf("@every %s", schedulerInterval), schedulerRun); err != nil {
+		log.WithError(err).Fatal("registering cron entry")
+	}
 	scheduler.Start()
 
 	router = mux.NewRouter()
@@ -105,7 +111,13 @@ func main() {
 	handler = httpHelper.GzipHandler(handler)
 	handler = httpHelper.NewHTTPLogHandler(handler)
 
-	if err := http.ListenAndServe(cfg.Listen, handler); err != nil {
+	server := &http.Server{
+		Addr:              cfg.Listen,
+		Handler:           handler,
+		ReadHeaderTimeout: time.Second,
+	}
+
+	if err := server.ListenAndServe(); err != nil {
 		log.WithError(err).Fatal("HTTP server exited unclean")
 	}
 }

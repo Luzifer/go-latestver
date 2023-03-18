@@ -22,7 +22,7 @@ import (
 )
 
 type (
-	APICatalogEntry struct {
+	apiCatalogEntry struct {
 		database.CatalogEntry
 		database.CatalogMeta
 	}
@@ -35,10 +35,10 @@ func buildFullURL(u *url.URL, _ error) string {
 	}, "/")
 }
 
-func catalogEntryToAPICatalogEntry(ce database.CatalogEntry) (APICatalogEntry, error) {
+func catalogEntryToAPICatalogEntry(ce database.CatalogEntry) (apiCatalogEntry, error) {
 	cm, err := storage.Catalog.GetMeta(&ce)
 	if err != nil {
-		return APICatalogEntry{}, errors.Wrap(err, "fetching catalog meta")
+		return apiCatalogEntry{}, errors.Wrap(err, "fetching catalog meta")
 	}
 
 	for _, l := range fetcher.Get(ce.Fetcher).Links(ce.FetcherConfig) {
@@ -55,7 +55,7 @@ func catalogEntryToAPICatalogEntry(ce database.CatalogEntry) (APICatalogEntry, e
 		}
 	}
 
-	return APICatalogEntry{CatalogEntry: ce, CatalogMeta: *cm}, nil
+	return apiCatalogEntry{CatalogEntry: ce, CatalogMeta: *cm}, nil
 }
 
 func handleBadgeRedirect(w http.ResponseWriter, r *http.Request) {
@@ -142,8 +142,8 @@ func handleCatalogGetVersion(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprint(w, cm.CurrentVersion)
 }
 
-func handleCatalogList(w http.ResponseWriter, r *http.Request) {
-	out := make([]APICatalogEntry, len(configFile.Catalog))
+func handleCatalogList(w http.ResponseWriter, _ *http.Request) {
+	out := make([]apiCatalogEntry, len(configFile.Catalog))
 
 	for i := range configFile.Catalog {
 		ce := configFile.Catalog[i]

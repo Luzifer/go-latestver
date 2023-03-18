@@ -7,6 +7,8 @@ import (
 	"path/filepath"
 
 	"github.com/pkg/errors"
+
+	"github.com/Luzifer/go-latestver/internal/helpers"
 )
 
 func handleSinglePage(w http.ResponseWriter, r *http.Request) {
@@ -19,16 +21,15 @@ func handleSinglePage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	for _, path := range []string{
+	for _, frontendPath := range []string{
 		filepath.Join("frontend", path.Base(urlPath)),
 		filepath.Join("frontend", "index.html"),
 	} {
-		f, err := frontendFS.Open(path)
+		f, err := frontendFS.Open(frontendPath)
 		switch {
-
 		case err == nil:
 			// file is opened, serve it
-			defer f.Close()
+			defer func() { helpers.LogIfErr(f.Close(), "closing frontend file after serve") }() //revive:disable-line:defer Fine here as it will only open one file
 
 			stat, err := f.Stat()
 			if err != nil {

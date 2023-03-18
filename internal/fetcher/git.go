@@ -20,12 +20,14 @@ import (
  */
 
 type (
+	// GitTagFetcher implements the fetcher interface to monitor tags in a git repository
 	GitTagFetcher struct{}
 )
 
 func init() { registerFetcher("git_tag", func() Fetcher { return &GitTagFetcher{} }) }
 
-func (g GitTagFetcher) FetchVersion(ctx context.Context, attrs *fieldcollection.FieldCollection) (string, time.Time, error) {
+// FetchVersion retrieves the latest version for the catalog entry
+func (g GitTagFetcher) FetchVersion(_ context.Context, attrs *fieldcollection.FieldCollection) (string, time.Time, error) {
 	repo, err := git.Init(memory.NewStorage(), nil)
 	if err != nil {
 		return "", time.Time{}, errors.Wrap(err, "opening in-mem repo")
@@ -79,11 +81,13 @@ func (g GitTagFetcher) FetchVersion(ctx context.Context, attrs *fieldcollection.
 	return latestTag.Name().Short(), latestTagTime, nil
 }
 
-func (g GitTagFetcher) Links(attrs *fieldcollection.FieldCollection) []database.CatalogLink {
+// Links retrieves a collection of links for the fetcher
+func (GitTagFetcher) Links(_ *fieldcollection.FieldCollection) []database.CatalogLink {
 	return nil
 }
 
-func (g GitTagFetcher) Validate(attrs *fieldcollection.FieldCollection) error {
+// Validate validates the configuration given to the fetcher
+func (GitTagFetcher) Validate(attrs *fieldcollection.FieldCollection) error {
 	// @attr remote required string "" Repository remote to fetch the tags from (should accept everything you can use in `git remote set-url` command)
 	if v, err := attrs.String("remote"); err != nil || v == "" {
 		return errors.New("remote is expected to be non-empty string")
@@ -92,7 +96,7 @@ func (g GitTagFetcher) Validate(attrs *fieldcollection.FieldCollection) error {
 	return nil
 }
 
-func (g GitTagFetcher) tagRefToTime(repo *git.Repository, tag *plumbing.Reference) (time.Time, error) {
+func (GitTagFetcher) tagRefToTime(repo *git.Repository, tag *plumbing.Reference) (time.Time, error) {
 	tagObj, err := repo.TagObject(tag.Hash())
 	if err == nil {
 		// Annotated tag: Take the time of the tag

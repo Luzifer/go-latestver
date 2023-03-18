@@ -11,6 +11,7 @@ import (
 	"github.com/pkg/errors"
 
 	"github.com/Luzifer/go-latestver/internal/database"
+	"github.com/Luzifer/go-latestver/internal/helpers"
 	"github.com/Luzifer/go_helpers/v2/fieldcollection"
 )
 
@@ -22,6 +23,7 @@ import (
 const githubHTTPTimeout = 2 * time.Second
 
 type (
+	// GithubReleaseFetcher implements the fetcher interface to monitor releases in a Github repository
 	GithubReleaseFetcher struct{}
 
 	githubRelease struct {
@@ -33,7 +35,8 @@ type (
 
 func init() { registerFetcher("github_release", func() Fetcher { return &GithubReleaseFetcher{} }) }
 
-func (g GithubReleaseFetcher) FetchVersion(ctx context.Context, attrs *fieldcollection.FieldCollection) (string, time.Time, error) {
+// FetchVersion retrieves the latest version for the catalog entry
+func (GithubReleaseFetcher) FetchVersion(ctx context.Context, attrs *fieldcollection.FieldCollection) (string, time.Time, error) {
 	ctx, cancel := context.WithTimeout(ctx, githubHTTPTimeout)
 	defer cancel()
 
@@ -56,11 +59,11 @@ func (g GithubReleaseFetcher) FetchVersion(ctx context.Context, attrs *fieldcoll
 	if err != nil {
 		return "", time.Time{}, errors.Wrap(err, "executing request")
 	}
+	defer func() { helpers.LogIfErr(resp.Body.Close(), "closing response body after read") }()
 
 	if resp.StatusCode != http.StatusOK {
 		return "", time.Time{}, errors.Errorf("unexpected HTTP status %d", resp.StatusCode)
 	}
-	defer resp.Body.Close()
 
 	var payload []githubRelease
 	if err = json.NewDecoder(resp.Body).Decode(&payload); err != nil {
@@ -85,7 +88,8 @@ func (g GithubReleaseFetcher) FetchVersion(ctx context.Context, attrs *fieldcoll
 	return release.TagName, release.PublishedAt, nil
 }
 
-func (g GithubReleaseFetcher) Links(attrs *fieldcollection.FieldCollection) []database.CatalogLink {
+// Links retrieves a collection of links for the fetcher
+func (GithubReleaseFetcher) Links(attrs *fieldcollection.FieldCollection) []database.CatalogLink {
 	return []database.CatalogLink{
 		{
 			IconClass: "fab fa-github",
@@ -95,7 +99,8 @@ func (g GithubReleaseFetcher) Links(attrs *fieldcollection.FieldCollection) []da
 	}
 }
 
-func (g GithubReleaseFetcher) Validate(attrs *fieldcollection.FieldCollection) error {
+// Validate validates the configuration given to the fetcher
+func (GithubReleaseFetcher) Validate(attrs *fieldcollection.FieldCollection) error {
 	// @attr repository required string "" Repository to fetch in form `owner/repo`
 	if v, err := attrs.String("repository"); err != nil || v == "" {
 		return errors.New("repository is expected to be non-empty string")

@@ -22,12 +22,14 @@ import (
 var htmlFetcherDefaultRegex = `(v?(?:[0-9]+\.?){2,})`
 
 type (
+	// HTMLFetcher implements the fetcher interface to monitor versions on websites by xpath queries
 	HTMLFetcher struct{}
 )
 
 func init() { registerFetcher("html", func() Fetcher { return &HTMLFetcher{} }) }
 
-func (h HTMLFetcher) FetchVersion(ctx context.Context, attrs *fieldcollection.FieldCollection) (string, time.Time, error) {
+// FetchVersion retrieves the latest version for the catalog entry
+func (HTMLFetcher) FetchVersion(_ context.Context, attrs *fieldcollection.FieldCollection) (string, time.Time, error) {
 	doc, err := htmlquery.LoadURL(attrs.MustString("url", nil))
 	if err != nil {
 		return "", time.Time{}, errors.Wrap(err, "loading URL")
@@ -58,7 +60,8 @@ func (h HTMLFetcher) FetchVersion(ctx context.Context, attrs *fieldcollection.Fi
 	return match[1], time.Now(), nil
 }
 
-func (h HTMLFetcher) Links(attrs *fieldcollection.FieldCollection) []database.CatalogLink {
+// Links retrieves a collection of links for the fetcher
+func (HTMLFetcher) Links(attrs *fieldcollection.FieldCollection) []database.CatalogLink {
 	return []database.CatalogLink{
 		{
 			IconClass: "fas fa-globe",
@@ -68,7 +71,8 @@ func (h HTMLFetcher) Links(attrs *fieldcollection.FieldCollection) []database.Ca
 	}
 }
 
-func (h HTMLFetcher) Validate(attrs *fieldcollection.FieldCollection) error {
+// Validate validates the configuration given to the fetcher
+func (HTMLFetcher) Validate(attrs *fieldcollection.FieldCollection) error {
 	// @attr url required string "" URL to fetch the HTML from
 	if v, err := attrs.String("url"); err != nil || v == "" {
 		return errors.New("url is expected to be non-empty string")

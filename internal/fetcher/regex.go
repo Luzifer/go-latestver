@@ -2,7 +2,7 @@ package fetcher
 
 import (
 	"context"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"regexp"
 	"time"
@@ -10,6 +10,7 @@ import (
 	"github.com/pkg/errors"
 
 	"github.com/Luzifer/go-latestver/internal/database"
+	"github.com/Luzifer/go-latestver/internal/helpers"
 	"github.com/Luzifer/go_helpers/v2/fieldcollection"
 )
 
@@ -24,12 +25,14 @@ const (
 )
 
 type (
+	// RegexFetcher implements the fetcher interface to monitor versions on a web request by regex
 	RegexFetcher struct{}
 )
 
 func init() { registerFetcher("regex", func() Fetcher { return &RegexFetcher{} }) }
 
-func (h RegexFetcher) FetchVersion(ctx context.Context, attrs *fieldcollection.FieldCollection) (string, time.Time, error) {
+// FetchVersion retrieves the latest version for the catalog entry
+func (RegexFetcher) FetchVersion(ctx context.Context, attrs *fieldcollection.FieldCollection) (string, time.Time, error) {
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, attrs.MustString("url", nil), nil)
 	if err != nil {
 		return "", time.Time{}, errors.Wrap(err, "creating request")
@@ -39,13 +42,13 @@ func (h RegexFetcher) FetchVersion(ctx context.Context, attrs *fieldcollection.F
 	if err != nil {
 		return "", time.Time{}, errors.Wrap(err, "executing request")
 	}
-	defer resp.Body.Close()
+	defer func() { helpers.LogIfErr(resp.Body.Close(), "closing response body after read") }()
 
 	if resp.StatusCode >= httpStatus3xx {
 		return "", time.Time{}, errors.Errorf("HTTP status %d", resp.StatusCode)
 	}
 
-	data, err := ioutil.ReadAll(resp.Body)
+	data, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return "", time.Time{}, errors.Wrap(err, "reading response body")
 	}
@@ -62,7 +65,8 @@ func (h RegexFetcher) FetchVersion(ctx context.Context, attrs *fieldcollection.F
 	return matches[1], time.Now(), nil
 }
 
-func (h RegexFetcher) Links(attrs *fieldcollection.FieldCollection) []database.CatalogLink {
+// Links retrieves a collection of links for the fetcher
+func (RegexFetcher) Links(attrs *fieldcollection.FieldCollection) []database.CatalogLink {
 	return []database.CatalogLink{
 		{
 			IconClass: "fas fa-globe",
@@ -72,7 +76,8 @@ func (h RegexFetcher) Links(attrs *fieldcollection.FieldCollection) []database.C
 	}
 }
 
-func (h RegexFetcher) Validate(attrs *fieldcollection.FieldCollection) error {
+// Validate validates the configuration given to the fetcher
+func (RegexFetcher) Validate(attrs *fieldcollection.FieldCollection) error {
 	// @attr url required string "" URL to fetch the content from
 	if v, err := attrs.String("url"); err != nil || v == "" {
 		return errors.New("url is expected to be non-empty string")

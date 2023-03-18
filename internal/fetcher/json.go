@@ -3,7 +3,7 @@ package fetcher
 import (
 	"bytes"
 	"context"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"regexp"
 	"time"
@@ -13,6 +13,7 @@ import (
 	"github.com/pkg/errors"
 
 	"github.com/Luzifer/go-latestver/internal/database"
+	"github.com/Luzifer/go-latestver/internal/helpers"
 	"github.com/Luzifer/go_helpers/v2/fieldcollection"
 )
 
@@ -28,11 +29,13 @@ var (
 )
 
 type (
+	// JSONFetcher implements the fetcher interface to retrieve a version from a JSON document
 	JSONFetcher struct{}
 )
 
 func init() { registerFetcher("json", func() Fetcher { return &JSONFetcher{} }) }
 
+// FetchVersion retrieves the latest version for the catalog entry
 func (JSONFetcher) FetchVersion(ctx context.Context, attrs *fieldcollection.FieldCollection) (string, time.Time, error) {
 	var (
 		doc *jsonquery.Node
@@ -55,9 +58,9 @@ func (JSONFetcher) FetchVersion(ctx context.Context, attrs *fieldcollection.Fiel
 		if err != nil {
 			return "", time.Time{}, errors.Wrap(err, "executing request")
 		}
-		defer resp.Body.Close()
+		defer func() { helpers.LogIfErr(resp.Body.Close(), "closing response body after read") }()
 
-		body, err = ioutil.ReadAll(resp.Body)
+		body, err = io.ReadAll(resp.Body)
 		if err != nil {
 			return "", time.Time{}, errors.Wrap(err, "reading response body")
 		}
@@ -101,8 +104,10 @@ func (JSONFetcher) FetchVersion(ctx context.Context, attrs *fieldcollection.Fiel
 	return match[1], time.Now(), nil
 }
 
-func (JSONFetcher) Links(attrs *fieldcollection.FieldCollection) []database.CatalogLink { return nil }
+// Links retrieves a collection of links for the fetcher
+func (JSONFetcher) Links(_ *fieldcollection.FieldCollection) []database.CatalogLink { return nil }
 
+// Validate validates the configuration given to the fetcher
 func (JSONFetcher) Validate(attrs *fieldcollection.FieldCollection) error {
 	// @attr url required string "" URL to fetch the HTML from
 	if v, err := attrs.String("url"); err != nil || v == "" {

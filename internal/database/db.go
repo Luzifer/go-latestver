@@ -1,3 +1,5 @@
+// Package database implements a wrapper around the real database
+// with some helper functions to store catalog / log entries
 package database
 
 import (
@@ -14,6 +16,7 @@ import (
 )
 
 type (
+	// Client represents a database client
 	Client struct {
 		Catalog CatalogMetaStore
 		Logs    LogStore
@@ -30,6 +33,9 @@ type (
 	}
 )
 
+// NewClient creates a new Client and connects to the database using
+// some default configurations. The database is automatically
+// initialized with required tables.
 func NewClient(dbtype, dsn string) (*Client, error) {
 	c := &Client{}
 	c.Catalog = CatalogMetaStore{c}
@@ -75,6 +81,7 @@ func NewClient(dbtype, dsn string) (*Client, error) {
 	return c, nil
 }
 
+// Migrate executes database migrations for all required types
 func (c Client) Migrate(dest *Client) error {
 	for _, m := range []migrator{
 		c.Catalog,

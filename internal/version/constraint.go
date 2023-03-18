@@ -3,6 +3,7 @@ package version
 import "github.com/pkg/errors"
 
 type (
+	// Constraint document how a version update should be handled
 	Constraint struct {
 		AllowDowngrade  bool `yaml:"allow_downgrade"`
 		AllowPrerelease bool `yaml:"allow_prerelease"`
@@ -25,6 +26,8 @@ const (
 	compareResultUpgrade
 )
 
+// ShouldApply checks whether a new version should overwrite the old
+// one given the parameters inside the Constraint
 func (c Constraint) ShouldApply(oldVersion, newVersion string) (bool, error) {
 	if oldVersion == "" && newVersion != "" {
 		// The old version does not exist, the new one does, update it!
