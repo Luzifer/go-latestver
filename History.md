@@ -1,3 +1,7 @@
+# 0.5.0 / 2023-03-19
+
+  * Configure file watcher to follow links
+
 # 0.4.0 / 2023-03-18
 
   * Allow to disable filesystem watcher
