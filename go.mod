@@ -3,7 +3,7 @@ module github.com/Luzifer/go-latestver
 go 1.19
 
 require (
-	github.com/Luzifer/go_helpers/v2 v2.15.3
+	github.com/Luzifer/go_helpers/v2 v2.16.0
 	github.com/Luzifer/rconfig/v2 v2.4.0
 	github.com/antchfx/htmlquery v1.3.0
 	github.com/antchfx/jsonquery v1.3.2

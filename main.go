@@ -74,7 +74,16 @@ func main() {
 	}
 
 	if cfg.WatchConfig {
-		fsWatch, err := fileHelper.NewSimpleWatcher(cfg.Config, time.Minute)
+		fsWatch, err := fileHelper.NewWatcherWithOpts(
+			cfg.Config,
+			fileHelper.WatcherOpts{
+				FollowSymlinks: true,
+			},
+			time.Minute,
+			fileHelper.WatcherCheckPresence,
+			fileHelper.WatcherCheckSize,
+			fileHelper.WatcherCheckMtime,
+		)
 		if err != nil {
 			log.WithError(err).Fatal("creating config file watcher")
 		}

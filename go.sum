@@ -1,7 +1,5 @@
-github.com/Luzifer/go_helpers/v2 v2.15.2 h1:1L96lhh/E9JKyHoYcBelmjz2pV9qp+u2Ap6fPsfsUrc=
-github.com/Luzifer/go_helpers/v2 v2.15.2/go.mod h1:C5EkTBawA4sJt0CHoAoblgGPwTjW9blXZ/Et6RiEu6Q=
-github.com/Luzifer/go_helpers/v2 v2.15.3 h1:g7EyKdfftZxEcJmDN3LePVs+QbXU/YqcLlPSMGiZ1Ek=
-github.com/Luzifer/go_helpers/v2 v2.15.3/go.mod h1:C5EkTBawA4sJt0CHoAoblgGPwTjW9blXZ/Et6RiEu6Q=
+github.com/Luzifer/go_helpers/v2 v2.16.0 h1:Au+q+IJg5eIU7N2tnU6DVl/gHvSWXkN4GmdgzvfsLu0=
+github.com/Luzifer/go_helpers/v2 v2.16.0/go.mod h1:C5EkTBawA4sJt0CHoAoblgGPwTjW9blXZ/Et6RiEu6Q=
 github.com/Luzifer/rconfig/v2 v2.4.0 h1:MAdymTlExAZ8mx5VG8xOFAtFQSpWBipKYQHPOmYTn9o=
 github.com/Luzifer/rconfig/v2 v2.4.0/go.mod h1:hWF3ZVSusbYlg5bEvCwalEyUSY+0JPJWUiIu7rBmav8=
 github.com/Microsoft/go-winio v0.5.2/go.mod h1:WpS1mjBmmwHBEWmogvA2mj8546UReBk4v8QkMxJ6pZY=
