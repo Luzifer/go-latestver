@@ -1,3 +1,8 @@
+# 0.5.1 / 2023-09-30
+
+  * Update linter config, fix linter error
+  * Update dependencies
+
 # 0.5.0 / 2023-03-19
 
   * Configure file watcher to follow links
