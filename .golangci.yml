@@ -29,7 +29,6 @@ linters:
     - bodyclose     # checks whether HTTP response body is closed successfully [fast: true, auto-fix: false]
     - containedctx  # containedctx is a linter that detects struct contained context.Context field [fast: true, auto-fix: false]
     - contextcheck  # check the function whether use a non-inherited context [fast: false, auto-fix: false]
-    - depguard      # Go linter that checks if package imports are in a list of acceptable packages [fast: true, auto-fix: false]
     - dogsled       # Checks assignments with too many blank identifiers (e.g. x, _, _, _, := f()) [fast: true, auto-fix: false]
     - durationcheck # check for two durations multiplied together [fast: false, auto-fix: false]
     - errcheck      # Errcheck is a program for checking for unchecked errors in go programs. These unchecked errors can be critical bugs in some cases [fast: false, auto-fix: false]
@@ -67,10 +66,6 @@ linters:
     - wrapcheck     # Checks that errors returned from external packages are wrapped [fast: false, auto-fix: false]
 
 linters-settings:
-  forbidigo:
-    forbid:
-      - 'fmt\.Errorf' # Should use github.com/pkg/errors
-
   funlen:
     lines: 100
     statements: 60

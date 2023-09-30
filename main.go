@@ -61,7 +61,7 @@ func main() {
 	}
 
 	if cfg.VersionAndExit {
-		fmt.Printf("go-latestver %s\n", version)
+		fmt.Printf("go-latestver %s\n", version) //nolint:forbidigo
 		os.Exit(0)
 	}
 
