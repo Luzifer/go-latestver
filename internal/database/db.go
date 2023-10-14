@@ -10,6 +10,7 @@ import (
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 	"gorm.io/driver/mysql"
+	"gorm.io/driver/postgres"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
@@ -58,6 +59,15 @@ func NewClient(dbtype, dsn string) (*Client, error) {
 		})
 		if err != nil {
 			return nil, errors.Wrap(err, "opening mysql database")
+		}
+		c.db = db
+
+	case "crdb", "postgres", "postgresql":
+		db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{
+			Logger: dbLogger,
+		})
+		if err != nil {
+			return nil, errors.Wrap(err, "opening postgres database")
 		}
 		c.db = db
 

@@ -26,7 +26,7 @@ var (
 		Listen            string        `flag:"listen" default:":3000" description:"Port/IP to listen on"`
 		LogLevel          string        `flag:"log-level" default:"info" description:"Log level (debug, info, warn, error, fatal)"`
 		CheckDistribution time.Duration `flag:"check-distribution" default:"1h" description:"Checks are executed at static times every [value]"`
-		Storage           string        `flag:"storage" default:"sqlite" description:"Storage adapter to use (mysql, sqlite)"`
+		Storage           string        `flag:"storage" default:"sqlite" description:"Storage adapter to use (mysql, postgres, sqlite)"`
 		StorageDSN        string        `flag:"storage-dsn" default:"file::memory:?cache=shared" description:"DSN to connect to the database"`
 		VersionAndExit    bool          `flag:"version" default:"false" description:"Prints current version and exits"`
 		WatchConfig       bool          `flag:"watch-config" default:"true" description:"Whether to watch the config file for changes"`

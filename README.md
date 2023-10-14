@@ -18,9 +18,10 @@ Usage of go-latestver:
   -c, --config string                 Configuration file with catalog entries (default "config.yaml")
       --listen string                 Port/IP to listen on (default ":3000")
       --log-level string              Log level (debug, info, warn, error, fatal) (default "info")
-      --storage string                Storage adapter to use (mysql, sqlite) (default "sqlite")
+      --storage string                Storage adapter to use (mysql, postgres, sqlite) (default "sqlite")
       --storage-dsn string            DSN to connect to the database (default "file::memory:?cache=shared")
       --version                       Prints current version and exits
+      --watch-config                  Whether to watch the config file for changes (default true)
 ```
 
 The documentation for the format of the `config` file can be found in the [`docs/config.md`](docs/config.md) file.
