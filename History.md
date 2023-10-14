@@ -1,3 +1,8 @@
+# 0.6.0 / 2023-10-14
+
+  * Add postgres support
+  * Update dependencies
+
 # 0.5.1 / 2023-09-30
 
   * Update linter config, fix linter error
