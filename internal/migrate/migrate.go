@@ -2,21 +2,47 @@ package main
 
 import (
 	"github.com/pkg/errors"
+	"github.com/sirupsen/logrus"
 
 	"github.com/Luzifer/go-latestver/internal/database"
+	"github.com/Luzifer/rconfig/v2"
 )
 
-func main() {
-	src, err := database.NewClient("sqlite", "")
-	if err != nil {
-		panic(errors.Wrap(err, "opening src database"))
+var cfg = struct {
+	FromStorage    string `flag:"from-storage" description:"Storage type to migrate from" validate:"nonzero"`
+	FromStorageDSN string `flag:"from-storage-dsn" description:"DSN for the 'from' storage" validate:"nonzero"`
+	ToStorage      string `flag:"to-storage" description:"Storage type to migrate to" validate:"nonzero"`
+	ToStorageDSN   string `flag:"to-storage-dsn" description:"DSN for the 'to' storage" validate:"nonzero"`
+}{}
+
+func initApp() error {
+	rconfig.AutoEnv(true)
+	if err := rconfig.ParseAndValidate(&cfg); err != nil {
+		return errors.Wrap(err, "parsing commandline options")
 	}
-	dest, err := database.NewClient("mysql", "")
+
+	return nil
+}
+
+func main() {
+	var err error
+	if err = initApp(); err != nil {
+		logrus.WithError(err).Fatal("initializing app")
+	}
+
+	src, err := database.NewClient(cfg.FromStorage, cfg.FromStorageDSN)
 	if err != nil {
-		panic(errors.Wrap(err, "opening dest database"))
+		logrus.WithError(err).Fatal("opening from database")
+	}
+
+	dest, err := database.NewClient(cfg.ToStorage, cfg.ToStorageDSN)
+	if err != nil {
+		logrus.WithError(err).Fatal("opening to database")
 	}
 
 	if err := src.Migrate(dest); err != nil {
-		panic(errors.Wrap(err, "migrating to dest database"))
+		logrus.WithError(err).Fatal("execute migration")
 	}
+
+	logrus.Info("your database has been migrated")
 }
