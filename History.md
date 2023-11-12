@@ -1,3 +1,8 @@
+# 0.7.0 / 2023-11-12
+
+  * Update dependencies, replace axios
+  * Make db migration tooling more flexible
+
 # 0.6.0 / 2023-10-14
 
   * Add postgres support
