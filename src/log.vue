@@ -7,7 +7,6 @@
 </template>
 
 <script>
-import axios from 'axios'
 import LogTable from './logtable.vue'
 
 export default {
@@ -21,9 +20,10 @@ export default {
 
   methods: {
     fetchLog() {
-      axios.get('/v1/log?num=50')
-        .then(resp => {
-          this.logs = resp.data
+      return fetch('/v1/log?num=50')
+        .then(resp => resp.json())
+        .then(data => {
+          this.logs = data
         })
     },
   },

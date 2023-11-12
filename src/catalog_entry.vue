@@ -64,7 +64,6 @@
 </template>
 
 <script>
-import axios from 'axios'
 import LogTable from './logtable.vue'
 import moment from 'moment'
 
@@ -102,16 +101,18 @@ export default {
     },
 
     fetchEntry() {
-      axios.get(`/v1/catalog/${this.$route.params.name}/${this.$route.params.tag}`)
-        .then(resp => {
-          this.entry = resp.data
+      return fetch(`/v1/catalog/${this.$route.params.name}/${this.$route.params.tag}`)
+        .then(resp => resp.json())
+        .then(data => {
+          this.entry = data
         })
     },
 
     fetchLog() {
-      axios.get(`/v1/catalog/${this.$route.params.name}/${this.$route.params.tag}/log`)
-        .then(resp => {
-          this.logs = resp.data
+      return fetch(`/v1/catalog/${this.$route.params.name}/${this.$route.params.tag}/log`)
+        .then(resp => resp.json())
+        .then(data => {
+          this.logs = data
         })
     },
 

@@ -38,7 +38,6 @@
 </template>
 
 <script>
-import axios from 'axios'
 import moment from 'moment'
 
 export default {
@@ -56,9 +55,10 @@ export default {
 
   methods: {
     fetchCatalogIndex() {
-      axios.get('/v1/catalog')
-        .then(resp => {
-          this.catalog = resp.data
+      return fetch('/v1/catalog')
+        .then(resp => resp.json())
+        .then(data => {
+          this.catalog = data
         })
     },
 
