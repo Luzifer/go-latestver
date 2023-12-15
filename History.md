@@ -1,3 +1,7 @@
+# 0.7.1 / 2023-12-15
+
+  * Update dependencies
+
 # 0.7.0 / 2023-11-12
 
   * Update dependencies, replace axios
