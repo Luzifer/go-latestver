@@ -1,3 +1,8 @@
+# 0.7.2 / 2023-12-19
+
+  * Update dependencies
+  * [ci] Fix: deprecated repo URL
+
 # 0.7.1 / 2023-12-15
 
   * Update dependencies
