@@ -1,3 +1,7 @@
+# 0.8.1 / 2024-03-08
+
+  * Update dependencies
+
 # 0.8.0 / 2024-03-08
 
   * Add `helm` fetcher
