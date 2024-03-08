@@ -94,15 +94,14 @@ func Test_LogStorage(t *testing.T) {
 		rt = time.Now()
 	)
 
-	for _, le := range []LogEntry{
+	for _, le := range []*LogEntry{
 		{CatalogName: ce.Name, CatalogTag: ce.Tag, Timestamp: rt.Add(-3 * time.Hour), VersionFrom: "1.0.0", VersionTo: "1.1.0"},
 		{CatalogName: ce.Name, CatalogTag: ce.Tag, Timestamp: rt.Add(-1 * time.Hour), VersionFrom: "1.2.0", VersionTo: "1.3.0"},
 		{CatalogName: ce.Name, CatalogTag: ce.Tag, Timestamp: rt.Add(-2 * time.Hour), VersionFrom: "1.1.0", VersionTo: "1.2.0"},
 		{CatalogName: "anotherapp", CatalogTag: ce.Tag, Timestamp: rt.Add(-2 * time.Hour), VersionFrom: "5.2.0", VersionTo: "5.2.1"},
 		{CatalogName: "anotherapp", CatalogTag: ce.Tag, Timestamp: rt.Add(-1 * time.Hour), VersionFrom: "5.2.1", VersionTo: "6.0.0"},
 	} {
-		//#nosec G601 // Acceptable for test usage
-		if err = dbc.Logs.Add(&le); err != nil {
+		if err = dbc.Logs.Add(le); err != nil {
 			t.Fatalf("unable to add log entry: %s", err)
 		}
 	}
