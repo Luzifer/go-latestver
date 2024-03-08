@@ -1,3 +1,9 @@
+# 0.8.0 / 2024-03-08
+
+  * Add `helm` fetcher
+  * Fix: HTTP log using different logger than rest
+  * Lint: Fix linter error
+
 # 0.7.3 / 2024-02-28
 
   * Update dependencies
