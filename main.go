@@ -118,7 +118,7 @@ func main() {
 
 	var handler http.Handler = router
 	handler = httpHelper.GzipHandler(handler)
-	handler = httpHelper.NewHTTPLogHandler(handler)
+	handler = httpHelper.NewHTTPLogHandlerWithLogger(handler, log.StandardLogger())
 
 	server := &http.Server{
 		Addr:              cfg.Listen,
