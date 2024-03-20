@@ -1,3 +1,7 @@
+# 0.8.2 / 2024-03-20
+
+  * Update dependencies
+
 # 0.8.1 / 2024-03-08
 
   * Update dependencies
