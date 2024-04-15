@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
-	"path"
 	"sort"
 	"strconv"
 	"strings"
@@ -14,8 +13,9 @@ import (
 	"github.com/gorilla/feeds"
 	"github.com/gorilla/mux"
 	"github.com/pkg/errors"
-	log "github.com/sirupsen/logrus"
+	"github.com/sirupsen/logrus"
 
+	"github.com/Luzifer/go-latestver/internal/badge"
 	"github.com/Luzifer/go-latestver/internal/config"
 	"github.com/Luzifer/go-latestver/internal/database"
 	"github.com/Luzifer/go-latestver/internal/fetcher"
@@ -58,7 +58,7 @@ func catalogEntryToAPICatalogEntry(ce database.CatalogEntry) (apiCatalogEntry, e
 	return apiCatalogEntry{CatalogEntry: ce, CatalogMeta: *cm}, nil
 }
 
-func handleBadgeRedirect(w http.ResponseWriter, r *http.Request) {
+func handleBadge(w http.ResponseWriter, r *http.Request) {
 	var (
 		compare   = r.FormValue("compare")
 		vars      = mux.Vars(r)
@@ -82,14 +82,11 @@ func handleBadgeRedirect(w http.ResponseWriter, r *http.Request) {
 		color = "red"
 	}
 
-	target, err := url.Parse(cfg.BadgeGenInstance)
-	if err != nil {
-		http.Error(w, "Misconfigured BadgeGenInstance", http.StatusInternalServerError)
-		return
+	svg := badge.Create(ce.Key(), cm.CurrentVersion, color)
+	w.Header().Add("Content-Type", "image/svg+xml")
+	if _, err = w.Write(svg); err != nil {
+		logrus.WithError(err).Error("writing SVG response")
 	}
-
-	target.Path = path.Join(target.Path, "static", ce.Key(), cm.CurrentVersion, color)
-	http.Redirect(w, r, target.String(), http.StatusFound)
 }
 
 func handleCatalogGet(w http.ResponseWriter, r *http.Request) {
@@ -106,14 +103,14 @@ func handleCatalogGet(w http.ResponseWriter, r *http.Request) {
 
 	ae, err := catalogEntryToAPICatalogEntry(ce)
 	if err != nil {
-		log.WithError(err).Error("Unable to fetch catalog data")
+		logrus.WithError(err).Error("Unable to fetch catalog data")
 		http.Error(w, "Unable to fetch catalog data", http.StatusInternalServerError)
 		return
 	}
 
 	w.Header().Set("Content-Type", "application/json")
 	if err = json.NewEncoder(w).Encode(ae); err != nil {
-		log.WithError(err).Error("Unable to encode catalog entry")
+		logrus.WithError(err).Error("Unable to encode catalog entry")
 		http.Error(w, "Unable to encode catalog meta", http.StatusInternalServerError)
 		return
 	}
@@ -133,7 +130,7 @@ func handleCatalogGetVersion(w http.ResponseWriter, r *http.Request) {
 
 	cm, err := storage.Catalog.GetMeta(&ce)
 	if err != nil {
-		log.WithError(err).Error("Unable to fetch catalog meta")
+		logrus.WithError(err).Error("Unable to fetch catalog meta")
 		http.Error(w, "Unable to fetch catalog meta", http.StatusInternalServerError)
 		return
 	}
@@ -150,7 +147,7 @@ func handleCatalogList(w http.ResponseWriter, _ *http.Request) {
 
 		ae, err := catalogEntryToAPICatalogEntry(ce)
 		if err != nil {
-			log.WithError(err).Error("Unable to fetch catalog data")
+			logrus.WithError(err).Error("Unable to fetch catalog data")
 			http.Error(w, "Unable to fetch catalog data", http.StatusInternalServerError)
 			return
 		}
@@ -162,7 +159,7 @@ func handleCatalogList(w http.ResponseWriter, _ *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 	if err := json.NewEncoder(w).Encode(out); err != nil {
-		log.WithError(err).Error("Unable to encode catalog entry list")
+		logrus.WithError(err).Error("Unable to encode catalog entry list")
 		http.Error(w, "Unable to encode catalog meta", http.StatusInternalServerError)
 		return
 	}
@@ -184,7 +181,7 @@ func handleLog(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 	if err = json.NewEncoder(w).Encode(logs); err != nil {
-		log.WithError(err).Error("Unable to encode logs")
+		logrus.WithError(err).Error("Unable to encode logs")
 		http.Error(w, "Unable to encode logs", http.StatusInternalServerError)
 		return
 	}
@@ -229,7 +226,7 @@ func handleLogFeed(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/rss+xml; charset=utf-8")
 	if err = feed.WriteRss(w); err != nil {
-		log.WithError(err).Error("Unable to render RSS")
+		logrus.WithError(err).Error("Unable to render RSS")
 		http.Error(w, "Unable to render RSS", http.StatusInternalServerError)
 		return
 	}
