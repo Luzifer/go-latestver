@@ -1,3 +1,8 @@
+# 0.9.0 / 2024-04-15
+
+  * Remove dependency to badge-gen instance
+  * Update dependencies
+
 # 0.8.2 / 2024-03-20
 
   * Update dependencies
