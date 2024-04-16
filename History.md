@@ -1,3 +1,9 @@
+# 0.10.0 / 2024-04-16
+
+  * Switch to pure-go sqlite driver
+  * CI: Add Helm Chart
+  * CI: Add Docker publishing
+
 # 0.9.0 / 2024-04-15
 
   * Remove dependency to badge-gen instance
