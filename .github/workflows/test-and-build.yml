@@ -18,17 +18,12 @@ jobs:
     container:
       image: luzifer/gh-arch-env
       env:
-        CGO_ENABLED: 1
+        CGO_ENABLED: 0
         GOPATH: /go
 
     runs-on: ubuntu-latest
 
     steps:
-      - name: Install required packages
-        run: |
-          pacman -Syy --noconfirm \
-            base-devel
-
       - uses: actions/checkout@v4
         with:
           show-progress: false
