@@ -4,7 +4,7 @@ set -euo pipefail
 chart_yaml=charts/latestver/Chart.yaml
 
 # Patch latest App-Version into Chart
-yq -iP ".appVersion = \"$(git describe --tags --abbrev=0)\"" ${chart_yaml}
+yq -iP ".appVersion = \"v${TAG_VERSION}\"" ${chart_yaml}
 
 # Validate there has been a change before patching the chart version
 git diff --exit-code -- ${chart_yaml} >/dev/null && exit 0 || true
