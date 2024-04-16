@@ -16,6 +16,9 @@ go_test:
 	go test -cover -v ./...
 	golangci-lint run
 
+helm_lint:
+	helm lint charts/latestver
+
 # --- Documentation
 
 gendoc: .venv

@@ -2,6 +2,7 @@ config.yaml
 .env
 frontend/app.css
 frontend/app.js
-go-latestver
+/go-latestver
 latestver.db
 node_modules
+/latestver-*.tgz
