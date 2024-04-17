@@ -1,3 +1,7 @@
+# 0.10.1 / 2024-04-17
+
+  * Fix: Add missing configmap creation
+
 # 0.10.0 / 2024-04-16
 
   * Switch to pure-go sqlite driver
