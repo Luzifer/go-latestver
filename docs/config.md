@@ -64,6 +64,15 @@ Fetches the latest release from Github for a given repository not marked as pre-
 | --------- | :--: | ---- | ------------- | ----------- |
 | `repository` | ✅ | string |  | Repository to fetch in form `owner/repo` |
 
+## Fetcher: `helm`
+
+Fetches the index file of a Helm Repo and yields the latest Helm-Chart version
+
+| Attribute | Req. | Type | Default Value | Description |
+| --------- | :--: | ---- | ------------- | ----------- |
+| `chart` | ✅ | string |  | Chart to fetch the version of (i.e. "grafana") |
+| `repo` | ✅ | string |  | URL of the repo (i.e. "https://grafana.github.io/helm-charts") |
+
 ## Fetcher: `html`
 
 Downloads website, selects text-node using XPath and optionally applies custom regular expression
