@@ -1,3 +1,8 @@
+# 0.10.2 / 2024-04-19
+
+  * Update dependencies
+  * Fix: Update documentation
+
 # 0.10.1 / 2024-04-17
 
   * Fix: Add missing configmap creation
