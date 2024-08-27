@@ -136,7 +136,7 @@ func handleCatalogGetVersion(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Header().Set("Content-Type", "text/plain")
-	fmt.Fprint(w, cm.CurrentVersion)
+	fmt.Fprint(w, cm.CurrentVersion) //nolint:errcheck
 }
 
 func handleCatalogList(w http.ResponseWriter, _ *http.Request) {

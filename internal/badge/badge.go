@@ -46,7 +46,7 @@ func Create(title, text, color string) []byte {
 	titleW, _ := calculateTextWidth(title)
 	textW, _ := calculateTextWidth(text)
 
-	width := titleW + textW + 4*xSpacing //nolint:gomnd
+	width := titleW + textW + 4*xSpacing //nolint:mnd
 
 	t, _ := assets.ReadFile("badge.svg.tpl")
 	tpl, _ := template.New("svg").Parse(string(t))

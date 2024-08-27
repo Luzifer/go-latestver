@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"crypto/md5" //#nosec G501 // Used to derive a static jitter checksum, not cryptographically
-	"fmt"
 	"math"
 	"strings"
 	"time"
@@ -120,12 +119,10 @@ func nextCheckTime(ce *database.CatalogEntry, lastCheck *time.Time) time.Time {
 		return time.Now()
 	}
 
-	hash := md5.New() //#nosec G401 // Used to derive a static jitter checksum, not cryptographically
-	fmt.Fprint(hash, ce.Key())
-
 	var jitter int64
-	for i, c := range hash.Sum(nil) {
-		jitter += int64(c) * int64(math.Pow(10, float64(i))) //nolint:gomnd // No need for constant here
+	//#nosec G401 // Used to derive a static jitter checksum, not cryptographically
+	for i, c := range md5.Sum([]byte(ce.Key())) {
+		jitter += int64(c) * int64(math.Pow(10, float64(i))) //nolint:mnd // No need for constant here
 	}
 
 	next := lastCheck.

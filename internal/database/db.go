@@ -118,4 +118,6 @@ func (c Client) initDB() error {
 	return nil
 }
 
-func (l logwrap) Printf(f string, v ...interface{}) { fmt.Fprintf(l.l, f, v...) }
+func (l logwrap) Printf(f string, v ...interface{}) {
+	fmt.Fprintf(l.l, f, v...) //nolint:errcheck
+}
