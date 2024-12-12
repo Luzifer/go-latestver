@@ -1,3 +1,8 @@
+# 0.10.3 / 2024-12-12
+
+  * Update node dependencies
+  * Update Go dependencies
+
 # 0.10.2 / 2024-04-19
 
   * Update dependencies
