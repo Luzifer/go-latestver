@@ -9,10 +9,10 @@ import (
 )
 
 var cfg = struct {
-	FromStorage    string `flag:"from-storage" description:"Storage type to migrate from" validate:"nonzero"`
-	FromStorageDSN string `flag:"from-storage-dsn" description:"DSN for the 'from' storage" validate:"nonzero"`
-	ToStorage      string `flag:"to-storage" description:"Storage type to migrate to" validate:"nonzero"`
-	ToStorageDSN   string `flag:"to-storage-dsn" description:"DSN for the 'to' storage" validate:"nonzero"`
+	FromStorage    string `flag:"from-storage" description:"Storage type to migrate from" validate:"nonzero"`   //revive:disable-line:struct-tag
+	FromStorageDSN string `flag:"from-storage-dsn" description:"DSN for the 'from' storage" validate:"nonzero"` //revive:disable-line:struct-tag
+	ToStorage      string `flag:"to-storage" description:"Storage type to migrate to" validate:"nonzero"`       //revive:disable-line:struct-tag
+	ToStorageDSN   string `flag:"to-storage-dsn" description:"DSN for the 'to' storage" validate:"nonzero"`     //revive:disable-line:struct-tag
 }{}
 
 func initApp() error {
