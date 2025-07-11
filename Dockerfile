@@ -8,7 +8,7 @@ RUN set -ex \
       git \
       make \
       nodejs-current \
- && make frontend_prod build \
+ && make frontend_prod \
  && go install \
       -ldflags "-X main.version=$(git describe --tags --always || echo dev)" \
       -mod=readonly
