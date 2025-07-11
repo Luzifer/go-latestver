@@ -9,8 +9,8 @@ import (
 
 func Test_JSONFetcher(t *testing.T) {
 	attrs := fieldcollection.FieldCollectionFromData(map[string]interface{}{
-		"jsonp": true,
-		"url":   "https://my.atlassian.com/download/feeds/current/crowd.json", // This is JSONP
+		"jsonp": false,
+		"url":   "https://my.atlassian.com/download/feeds/current/crowd.json",
 		"xpath": "*[1]/version",
 	})
 

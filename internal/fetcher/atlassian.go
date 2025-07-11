@@ -54,11 +54,6 @@ func (AtlassianFetcher) FetchVersion(ctx context.Context, attrs *fieldcollection
 		return "", time.Time{}, errors.Wrap(err, "reading response body")
 	}
 
-	matches := jsonpStripRegex.FindSubmatch(body)
-	if matches == nil {
-		return "", time.Time{}, errors.New("document does not match jsonp syntax")
-	}
-
 	var payload []struct {
 		Description  string `json:"description"`
 		Edition      string `json:"edition"`
@@ -73,7 +68,7 @@ func (AtlassianFetcher) FetchVersion(ctx context.Context, attrs *fieldcollection
 		Upgradenotes string `json:"upgradeNotes"`
 	}
 
-	if err = json.Unmarshal(matches[1], &payload); err != nil {
+	if err = json.Unmarshal(body, &payload); err != nil {
 		return "", time.Time{}, errors.Wrap(err, "parsing response JSON")
 	}
 
