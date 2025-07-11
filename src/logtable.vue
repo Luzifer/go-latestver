@@ -1,37 +1,39 @@
 <template>
-  <b-table
-    :fields="fields"
-    :items="logs"
-    small
-    striped
-  >
-    <template #cell(_key)="data">
-      <router-link :to="{name: 'entry', params: { name:data.item.catalog_name, tag: data.item.catalog_tag }}">
-        {{ data.item.catalog_name }}:{{ data.item.catalog_tag }}
-      </router-link>
-    </template>
-
-    <template #cell(timestamp)="data">
-      {{ moment(data.item.timestamp).format('lll') }}
-    </template>
-  </b-table>
+  <table class="table table-sm table-striped">
+    <thead>
+      <tr>
+        <th>Catalog Entry</th>
+        <th>Version From</th>
+        <th>Version To</th>
+        <th>Updated At</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr
+        v-for="log in logs"
+        :key="`${log.name}:${log.tag}@${log.timestamp}`"
+      >
+        <td>
+          <router-link
+            :to="{name: 'entry', params: { name: log.catalog_name, tag: log.catalog_tag }}"
+            class="text-decoration-none"
+          >
+            {{ log.catalog_name }}:{{ log.catalog_tag }}
+          </router-link>
+        </td>
+        <td>{{ log.version_from }}</td>
+        <td>{{ log.version_to }}</td>
+        <td>{{ moment(log.timestamp).format('lll') }}</td>
+      </tr>
+    </tbody>
+  </table>
 </template>
 
-<script>
+<script lang="ts">
+import { defineComponent } from 'vue'
 import moment from 'moment'
 
-export default {
-  data() {
-    return {
-      fields: [
-        { key: '_key', label: 'Catalog Entry' },
-        { key: 'version_from', label: 'Version From' },
-        { key: 'version_to', label: 'Version To' },
-        { key: 'timestamp', label: 'Updated At' },
-      ],
-    }
-  },
-
+export default defineComponent({
   methods: {
     moment,
   },
@@ -41,8 +43,8 @@ export default {
   props: {
     logs: {
       required: true,
-      type: Array,
+      type: Array<any>,
     },
   },
-}
+})
 </script>

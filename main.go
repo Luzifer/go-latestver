@@ -101,6 +101,7 @@ func main() {
 	scheduler.Start()
 
 	router = mux.NewRouter()
+	router.HandleFunc("/v1/healthz", func(w http.ResponseWriter, _ *http.Request) { w.WriteHeader(http.StatusOK) }).Methods(http.MethodGet)
 	router.HandleFunc("/v1/catalog", handleCatalogList).Methods(http.MethodGet)
 	router.HandleFunc("/v1/catalog/{name}/{tag}", handleCatalogGet).Methods(http.MethodGet)
 	router.HandleFunc("/v1/catalog/{name}/{tag}/log", handleLog).Methods(http.MethodGet)

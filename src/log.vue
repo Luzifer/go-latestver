@@ -1,25 +1,26 @@
 <template>
-  <b-row>
-    <b-col>
+  <div class="row">
+    <div class="col">
       <log-table :logs="logs" />
-    </b-col>
-  </b-row>
+    </div>
+  </div>
 </template>
 
-<script>
+<script lang="ts">
+import { defineComponent } from 'vue'
 import LogTable from './logtable.vue'
 
-export default {
+export default defineComponent({
   components: { LogTable },
 
   data() {
     return {
-      logs: [],
+      logs: [] as any[],
     }
   },
 
   methods: {
-    fetchLog() {
+    fetchLog(): Promise<void> {
       return fetch('/v1/log?num=50')
         .then(resp => resp.json())
         .then(data => {
@@ -33,5 +34,5 @@ export default {
   },
 
   name: 'GoLatestVerLog',
-}
+})
 </script>

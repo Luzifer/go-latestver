@@ -1,88 +1,72 @@
 <template>
-  <b-row>
-    <b-col>
-      <b-table
-        :fields="fields"
-        :items="catalog"
-        small
-        striped
-      >
-        <template #cell(_key)="data">
-          <router-link :to="{name: 'entry', params: { name:data.item.name, tag: data.item.tag }}">
-            {{ data.item.name }}:{{ data.item.tag }}
-          </router-link>
-        </template>
-
-        <template #cell(version_time)="data">
-          {{ moment(data.item.version_time).format('lll') }}
-        </template>
-
-        <template #cell(_links)="data">
-          <a
-            v-for="link in data.item.links"
-            :key="link.name"
-            :href="link.url"
-            rel="noopener noreferrer"
-            target="_blank"
+  <div class="row">
+    <div class="col">
+      <table class="table table-sm table-striped">
+        <thead>
+          <tr>
+            <th>Catalog Entry</th>
+            <th>Version</th>
+            <th>Updated At</th>
+            <th>External Links</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            v-for="entry in catalog"
+            :key="entry.key"
           >
-            <font-awesome-icon
-              fixed-width
-              :icon="iconClassesToIcon(link.icon_class)"
-            />
-            {{ link.name }}
-          </a>
-        </template>
-      </b-table>
-    </b-col>
-  </b-row>
+            <td>
+              <router-link
+                :to="{name: 'entry', params: {name: entry.name, tag: entry.tag}}"
+                class="text-decoration-none"
+              >
+                {{ entry.key }}
+              </router-link>
+            </td>
+            <td>{{ entry.current_version }}</td>
+            <td>{{ moment(entry.version_time).format('lll') }}</td>
+            <td>
+              <a
+                v-for="link in entry.links"
+                :key="link.name"
+                :href="link.url"
+                rel="noopener noreferrer"
+                target="_blank"
+                class="text-decoration-none"
+              >
+                <i :class="iconClassesToIcon(link.icon_class)" />
+                {{ link.name }}
+              </a>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
 </template>
 
-<script>
+<script lang="ts">
+import { defineComponent } from 'vue'
+import { iconClassesToIcon } from './helpers'
 import moment from 'moment'
 
-export default {
+export default defineComponent({
   data() {
     return {
-      catalog: [],
-      fields: [
-        { key: '_key', label: 'Catalog Entry', sortable: true },
-        { key: 'current_version', label: 'Version' },
-        { key: 'version_time', label: 'Updated At', sortable: true },
-        { key: '_links', label: 'External Links' },
-      ],
+      catalog: [] as any[],
     }
   },
 
   methods: {
-    fetchCatalogIndex() {
+    fetchCatalogIndex(): Promise<void> {
       return fetch('/v1/catalog')
         .then(resp => resp.json())
         .then(data => {
-          this.catalog = data
+          this.catalog = data.map((e: any) => ({ ...e, key: `${e.name}:${e.tag}` }))
         })
     },
 
-    iconClassesToIcon(ic) {
-      let namespace = 'fas'
-      let icon = ''
-
-      for (const c of ic.split(' ')) {
-        if (c === 'fa-fw') {
-          continue
-        }
-
-        if (['fab', 'fas'].includes(c)) {
-          namespace = c
-        }
-
-        if (c.startsWith('fa-')) {
-          icon = c.replace('fa-', '')
-        }
-      }
-
-      return [namespace, icon]
-    },
-
+    iconClassesToIcon,
     moment,
   },
 
@@ -91,5 +75,5 @@ export default {
   },
 
   name: 'GoLatestVerCatalogIndex',
-}
+})
 </script>

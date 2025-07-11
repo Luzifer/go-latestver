@@ -1,8 +1,9 @@
 config.yaml
 .env
-frontend/app.css
-frontend/app.js
+frontend/*
+!frontend/index.html
 /go-latestver
 latestver.db
 node_modules
 /latestver-*.tgz
+storage.db

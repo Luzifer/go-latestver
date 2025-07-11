@@ -1,16 +1,19 @@
-default: lint build
+default: frontend_lint build
 
-build: node_modules
-	node ci/build.mjs
+build:
+	go build -ldflags "-X main.version=$(git describe --tags --always || echo dev)"
 
-lint: node_modules
-	./node_modules/.bin/eslint \
-		--ext .js,.vue \
-		--fix \
-		src
+frontend_prod: export NODE_ENV=production
+frontend_prod: frontend
+
+frontend: node_modules
+	corepack yarn@1 node ci/build.mjs
+
+frontend_lint: node_modules
+	corepack yarn@1 eslint --fix src
 
 node_modules:
-	npm ci
+	corepack yarn@1 install --production=false --frozen-lockfile
 
 go_test:
 	go test -cover -v ./...
@@ -18,6 +21,8 @@ go_test:
 
 helm_lint:
 	helm lint charts/latestver
+
+.PHONY: frontend
 
 # --- Documentation
 

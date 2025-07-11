@@ -1,90 +1,108 @@
 <template>
   <div>
-    <b-row>
-      <b-col>
-        <b-card-group>
-          <b-card header="Current Version">
-            {{ entry.current_version }}<br>
-            <small>{{ moment(entry.version_time).format('lll') }}</small>
-          </b-card>
-          <b-card header="Last Checked">
-            {{ moment(entry.last_checked).format('lll') }}
-          </b-card>
-          <b-card header="Badges">
-            <p class="text-center">
-              Current Version:<br>
-              <img
-                class="clickable"
-                :src="badgeURL"
-                @click="copyURL"
-              >
-            </p>
-            <p class="text-center">
-              Compare to Version:<br>
-              <img
-                class="clickable"
-                :src="`${badgeURL}?compare=otherversion`"
-                @click="copyURL"
-              >
-            </p>
-            <p class="text-center">
-              <small>(Click badge to copy URL)</small>
-            </p>
-          </b-card>
-          <b-card
-            header="External Links"
-            no-body
-          >
-            <b-list-group flush>
-              <b-list-group-item
+    <div class="row">
+      <div class="col">
+        <div class="card-group">
+          <div class="card">
+            <div class="card-header">
+              Current Version
+            </div>
+            <div class="card-body">
+              {{ entry.current_version }}<br>
+              <small>{{ moment(entry.version_time).format('lll') }}</small>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              Last Checked
+            </div>
+            <div class="card-body">
+              {{ moment(entry.last_checked).format('lll') }}
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              Badges
+            </div>
+            <div class="card-body">
+              <p class="text-center">
+                Current Version:<br>
+                <img
+                  class="clickable"
+                  :src="badgeURL"
+                  @click="copyURL"
+                >
+              </p>
+              <p class="text-center">
+                Compare to Version:<br>
+                <img
+                  class="clickable"
+                  :src="`${badgeURL}?compare=otherversion`"
+                  @click="copyURL"
+                >
+              </p>
+              <p class="text-center">
+                <small>(Click badge to copy URL)</small>
+              </p>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              External Links
+            </div>
+            <div class="list-group list-group-flush">
+              <a
                 v-for="link in entry.links"
                 :key="link.name"
+                class="list-group-item list-group-item-action"
                 :href="link.url"
                 rel="noopener noreferrer"
                 target="_blank"
               >
-                <font-awesome-icon
-                  fixed-width
-                  :icon="iconClassesToIcon(link.icon_class)"
-                />
+                <i :class="iconClassesToIcon(link.icon_class)" />
                 {{ link.name }}
-              </b-list-group-item>
-            </b-list-group>
-          </b-card>
-        </b-card-group>
-      </b-col>
-    </b-row>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
 
-    <b-row class="mt-3">
-      <b-col>
+    <div class="row mt-3">
+      <div class="col">
         <log-table :logs="logs" />
-      </b-col>
-    </b-row>
+      </div>
+    </div>
   </div>
 </template>
 
-<script>
+<script lang="ts">
+import { defineComponent } from 'vue'
+import { iconClassesToIcon } from './helpers'
 import LogTable from './logtable.vue'
 import moment from 'moment'
 
-export default {
+export default defineComponent({
   components: { LogTable },
 
   computed: {
-    badgeURL() {
+    badgeURL(): string {
       return `${window.location.href.split('?')[0]}.svg`
     },
   },
 
   data() {
     return {
-      entry: {},
-      logs: [],
+      entry: {} as any,
+      logs: [] as any[],
     }
   },
 
   methods: {
-    copyURL(evt) {
+    copyURL(evt): void {
       navigator.clipboard.writeText(evt.target.attributes.src.value)
         .then(() => this.$bvToast.toast('URL copied to clipboard', {
           autoHideDelay: 2000,
@@ -100,7 +118,7 @@ export default {
         }))
     },
 
-    fetchEntry() {
+    fetchEntry(): Promise<void> {
       return fetch(`/v1/catalog/${this.$route.params.name}/${this.$route.params.tag}`)
         .then(resp => resp.json())
         .then(data => {
@@ -108,7 +126,7 @@ export default {
         })
     },
 
-    fetchLog() {
+    fetchLog(): Promise<void> {
       return fetch(`/v1/catalog/${this.$route.params.name}/${this.$route.params.tag}/log`)
         .then(resp => resp.json())
         .then(data => {
@@ -116,27 +134,7 @@ export default {
         })
     },
 
-    iconClassesToIcon(ic) {
-      let namespace = 'fas'
-      let icon = ''
-
-      for (const c of ic.split(' ')) {
-        if (c === 'fa-fw') {
-          continue
-        }
-
-        if (['fab', 'fas'].includes(c)) {
-          namespace = c
-        }
-
-        if (c.startsWith('fa-')) {
-          icon = c.replace('fa-', '')
-        }
-      }
-
-      return [namespace, icon]
-    },
-
+    iconClassesToIcon,
     moment,
   },
 
@@ -146,7 +144,7 @@ export default {
   },
 
   name: 'GoLatestVerCatalogEntry',
-}
+})
 </script>
 
 <style>

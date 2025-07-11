@@ -1,64 +1,79 @@
 <template>
   <div>
-    <b-navbar
-      class="mb-2"
-      toggleable="lg"
-      type="dark"
-      variant="primary"
-    >
-      <b-navbar-brand :to="{name: 'index'}">
-        <font-awesome-icon
-          fixed-width
-          :icon="['fas', 'cloud-download-alt']"
-        />
-        Go-LatestVer
-      </b-navbar-brand>
+    <nav class="navbar navbar-expand-lg bg-body-tertiary mb-2">
+      <div class="container-fluid">
+        <RouterLink
+          class="navbar-brand"
+          :to="{name: 'index'}"
+        >
+          <i class="fas fa-cloud-download-alt fa-fw me-1" />
+          Go-LatestVer
+        </RouterLink>
 
-      <b-navbar-toggle target="nav-collapse" />
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarSupportedContent"
+          aria-controls="navbarSupportedContent"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <span class="navbar-toggler-icon" />
+        </button>
 
-      <b-collapse
-        id="nav-collapse"
-        is-nav
-      >
-        <b-navbar-nav>
-          <b-nav-item :to="{name: 'log'}">
-            Log
-          </b-nav-item>
-        </b-navbar-nav>
+        <div
+          id="navbarSupportedContent"
+          class="collapse navbar-collapse"
+        >
+          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+            <li class="nav-item">
+              <RouterLink
+                :to="{name: 'log'}"
+                class="nav-link"
+              >
+                Log
+              </RouterLink>
+            </li>
+          </ul>
+          <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+            <li class="nav-item">
+              <a
+                href="/log.rss"
+                class="nav-link"
+              >
+                <i class="fas fa-rss fa-fw" />
+                All Updates
+              </a>
+            </li>
+            <li class="nav-item">
+              <a
+                class="nav-link"
+                href="https://github.com/Luzifer/go-latestver"
+                rel="noopener noreferrer"
+                target="_blank"
+                title="Go-LatestVer on Github"
+              >
+                <i class="fab fa-github fa-fw" />
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
 
-        <!-- Right aligned nav items -->
-        <b-navbar-nav class="ml-auto">
-          <b-nav-item href="/log.rss">
-            <font-awesome-icon
-              fixed-width
-              :icon="['fas', 'rss']"
-            />
-            All Updates
-          </b-nav-item>
-
-          <b-nav-item
-            href="https://github.com/Luzifer/go-latestver"
-            rel="noopener noreferrer"
-            target="_blank"
-            title="Go-LatestVer on Github"
-          >
-            <font-awesome-icon
-              fixed-width
-              :icon="['fab', 'github']"
-            />
-          </b-nav-item>
-        </b-navbar-nav>
-      </b-collapse>
-    </b-navbar>
-
-    <b-container>
+    <div class="container">
       <router-view />
-    </b-container>
+    </div>
   </div>
 </template>
 
-<script>
-export default {
+<script lang="ts">
+import { RouterLink, RouterView } from 'vue-router'
+import { defineComponent } from 'vue'
+
+export default defineComponent({
+  components: { RouterLink, RouterView },
   name: 'GoLatestVerApp',
-}
+})
 </script>
