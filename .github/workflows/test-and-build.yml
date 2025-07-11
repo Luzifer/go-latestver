@@ -1,5 +1,4 @@
 ---
-
 name: test-and-build
 on:
   push:
@@ -16,7 +15,7 @@ jobs:
         shell: bash
 
     container:
-      image: luzifer/gh-arch-env
+      image: ghcr.io/luzifer-docker/gh-arch-env:latest
       env:
         CGO_ENABLED: 0
         GOPATH: /go
@@ -24,7 +23,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4.2.2
         with:
           show-progress: false
 
@@ -46,7 +45,7 @@ jobs:
         shell: bash
 
     container:
-      image: luzifer/gh-arch-env
+      image: ghcr.io/luzifer-docker/gh-arch-env:latest
       env:
         CGO_ENABLED: 0
         GOPATH: /go
@@ -57,12 +56,12 @@ jobs:
       packages: write
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4.2.2
         with:
           show-progress: false
 
       - name: Log into registry
-        uses: docker/login-action@v3
+        uses: docker/login-action@v3.4.0
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
@@ -89,12 +88,12 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4.2.2
         with:
           show-progress: false
 
       - name: Log into registry
-        uses: docker/login-action@v3
+        uses: docker/login-action@v3.4.0
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
@@ -102,5 +101,3 @@ jobs:
 
       - name: Docker Build & Publish
         run: bash ci/docker-publish.sh
-
-...
