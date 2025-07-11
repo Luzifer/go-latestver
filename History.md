@@ -1,3 +1,12 @@
+# 0.11.0 / 2025-07-12
+
+  * feat: port frontend to Vue3, Typescript and Bootstrap 5
+  * chore: update go dependencies
+  * ci: update chart version to tag version
+  * fix: color casing and atlassian no longer using JSONP
+  * fix(deps): pin dependencies
+  * fix: remove duplicate build from Dockerfile
+
 # 0.10.3 / 2024-12-12
 
   * Update node dependencies
