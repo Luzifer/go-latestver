@@ -1,9 +1,3 @@
-[![Go Report Card](https://goreportcard.com/badge/github.com/Luzifer/go-latestver)](https://goreportcard.com/report/github.com/Luzifer/go-latestver)
-![](https://badges.fyi/github/license/Luzifer/go-latestver)
-![](https://badges.fyi/github/downloads/Luzifer/go-latestver)
-![](https://badges.fyi/github/latest-release/Luzifer/go-latestver)
-![](https://knut.in/project-status/go-latestver)
-
 # Luzifer / Go-LatestVer
 
 Go-LatestVer is a replacement for the outdated and no longer maintained [latestver](https://github.com/binarybabel/latestver) following the same idea: Monitor a bunch of different sources of software in a single location using different kinds of fetchers, providing an API to have these information available in a single place and provide an UI to the user to look up versions easily.
@@ -12,7 +6,6 @@ Go-LatestVer is a replacement for the outdated and no longer maintained [latestv
 
 ```console
 Usage of go-latestver:
-      --badge-gen-instance string     Where to find the badge-gen instance to use badges from (default "https://badges.fyi/")
       --base-url string               Base-URL the application is reachable at (default "https://example.com/")
       --check-distribution duration   Checks are executed at static times every [value] (default 1h0m0s)
   -c, --config string                 Configuration file with catalog entries (default "config.yaml")
