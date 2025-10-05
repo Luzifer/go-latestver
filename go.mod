@@ -12,7 +12,7 @@ require (
 	github.com/antchfx/xpath v1.3.5
 	github.com/blang/semver/v4 v4.0.0
 	github.com/glebarez/sqlite v1.11.0
-	github.com/go-git/go-git/v5 v5.16.2
+	github.com/go-git/go-git/v5 v5.16.3
 	github.com/golang/freetype v0.0.0-20170609003504-e2365dfdc4a0
 	github.com/gorilla/feeds v1.2.0
 	github.com/gorilla/mux v1.8.1
