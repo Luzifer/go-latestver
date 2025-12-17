@@ -1,3 +1,19 @@
+# 0.11.1 / 2025-12-17
+
+  * fix(deps): update dependency bootstrap to v5.3.8
+  * fix(deps): update dependency vue-router to v4.6.4
+  * fix(deps): update dependency vue to v3.5.25
+  * fix(deps): update module github.com/antchfx/htmlquery to v1.3.5
+  * fix(deps): update module github.com/antchfx/xpath to v1.3.5
+  * fix(deps): update module github.com/go-git/go-git/v5 to v5.16.4
+  * fix(deps): update module github.com/stretchr/testify to v1.11.1
+  * fix(deps): update module github.com/tdewolff/minify/v2 to v2.24.8
+  * fix(deps): update module golang.org/x/image to v0.34.0
+  * fix(deps): update module golang.org/x/net to v0.48.0
+  * fix(deps): update module gorm.io/gorm to v1.31.1
+  * fix(deps): update module helm.sh/helm/v3 to v3.19.4
+  * fix(deps): update module sigs.k8s.io/yaml to v1.6.0
+
 # 0.11.0 / 2025-07-12
 
   * feat: port frontend to Vue3, Typescript and Bootstrap 5

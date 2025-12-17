@@ -1,7 +1,3 @@
----
-
 release_commit_message: "Release: Go-LatestVer {{.Version}}"
 pre_commit_commands:
   - bash ci/patch-chart-version.sh
-
-...
