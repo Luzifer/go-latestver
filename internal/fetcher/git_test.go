@@ -9,7 +9,7 @@ import (
 
 func Test_GitTagFetcher(t *testing.T) {
 	attrs := fieldcollection.FieldCollectionFromData(map[string]interface{}{
-		"remote": "https://github.com/WordPress/WordPress.git", // This is a huge repo and serves as benchmark too
+		"remote": "https://github.com/Luzifer/go-latestver.git",
 	})
 
 	f := Get("git_tag")
