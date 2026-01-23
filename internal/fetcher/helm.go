@@ -15,8 +15,8 @@ import (
 	"github.com/Luzifer/go-latestver/internal/helpers"
 	"github.com/Luzifer/go_helpers/v2/fieldcollection"
 	"github.com/pkg/errors"
-	"helm.sh/helm/v3/pkg/chart"
-	"helm.sh/helm/v3/pkg/repo"
+	chart "helm.sh/helm/v4/pkg/chart/v2"
+	repo "helm.sh/helm/v4/pkg/repo/v1"
 	"sigs.k8s.io/yaml"
 )
 
