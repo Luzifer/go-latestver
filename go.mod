@@ -6,7 +6,7 @@ toolchain go1.25.7
 
 require (
 	github.com/Luzifer/go_helpers/v2 v2.25.0
-	github.com/Luzifer/rconfig/v2 v2.6.0
+	github.com/Luzifer/rconfig/v2 v2.6.1
 	github.com/antchfx/htmlquery v1.3.5
 	github.com/antchfx/jsonquery v1.3.6
 	github.com/antchfx/xpath v1.3.5

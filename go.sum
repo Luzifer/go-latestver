@@ -8,8 +8,8 @@ github.com/Azure/go-ansiterm v0.0.0-20250102033503-faa5f7b0171c h1:udKWzYgxTojEK
 github.com/Azure/go-ansiterm v0.0.0-20250102033503-faa5f7b0171c/go.mod h1:xomTg63KZ2rFqZQzSB4Vz2SUXa1BpHTVz9L5PTmPC4E=
 github.com/Luzifer/go_helpers/v2 v2.25.0 h1:k1J4gd1+BfuokTDoWgcgib9P5mdadjzKEgbtKSVe46k=
 github.com/Luzifer/go_helpers/v2 v2.25.0/go.mod h1:KSVUdAJAav5cWGyB5oKGxmC27HrKULVTOxwPS/Kr+pc=
-github.com/Luzifer/rconfig/v2 v2.6.0 h1:ZKgsO2Wt/XZXawuAZCDkW7xszxZ8hQDTV1Wm63Jvnqk=
-github.com/Luzifer/rconfig/v2 v2.6.0/go.mod h1:CxISRwCV2WjO5gnUnaRGDq17u1M3TvmFgzJLr87ejtc=
+github.com/Luzifer/rconfig/v2 v2.6.1 h1:n8iAygRdri/yRqhOYtU80TcWyrzuEpeIhBmdseVtZo8=
+github.com/Luzifer/rconfig/v2 v2.6.1/go.mod h1:EmQawSlworIE4tMTHdSCHu1exXG8peNqj7tJtrYYleU=
 github.com/MakeNowJust/heredoc v1.0.0 h1:cXCdzVdstXyiTqTvfqk9SDHpKNjxuom+DOlyEeQ4pzQ=
 github.com/MakeNowJust/heredoc v1.0.0/go.mod h1:mG5amYoWBHf8vpLOuehzbGGw0EHxpZZ6lCpQ4fNJ8LE=
 github.com/Masterminds/semver/v3 v3.4.0 h1:Zog+i5UMtVoCU8oKka5P7i9q9HgrJeGzI9SA1Xbatp0=
