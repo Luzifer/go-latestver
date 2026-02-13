@@ -22,7 +22,7 @@ require (
 	github.com/stretchr/testify v1.11.1
 	github.com/tdewolff/minify/v2 v2.24.8
 	golang.org/x/image v0.36.0
-	golang.org/x/net v0.49.0
+	golang.org/x/net v0.50.0
 	gopkg.in/yaml.v3 v3.0.1
 	gorm.io/driver/mysql v1.6.0
 	gorm.io/driver/postgres v1.6.0
@@ -109,11 +109,11 @@ require (
 	go.opentelemetry.io/proto/otlp v1.5.0 // indirect
 	go.yaml.in/yaml/v2 v2.4.3 // indirect
 	go.yaml.in/yaml/v3 v3.0.4 // indirect
-	golang.org/x/crypto v0.47.0 // indirect
+	golang.org/x/crypto v0.48.0 // indirect
 	golang.org/x/oauth2 v0.30.0 // indirect
 	golang.org/x/sync v0.19.0 // indirect
-	golang.org/x/sys v0.40.0 // indirect
-	golang.org/x/term v0.39.0 // indirect
+	golang.org/x/sys v0.41.0 // indirect
+	golang.org/x/term v0.40.0 // indirect
 	golang.org/x/text v0.34.0 // indirect
 	golang.org/x/time v0.12.0 // indirect
 	google.golang.org/protobuf v1.36.8 // indirect
