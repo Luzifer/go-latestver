@@ -2,7 +2,7 @@ module github.com/Luzifer/go-latestver
 
 go 1.25.0
 
-toolchain go1.25.7
+toolchain go1.26.0
 
 require (
 	github.com/Luzifer/go_helpers/v2 v2.25.2
