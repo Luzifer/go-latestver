@@ -4,7 +4,7 @@ import (
 	"context"
 	"testing"
 
-	"github.com/Luzifer/go_helpers/v2/fieldcollection"
+	"github.com/Luzifer/go_helpers/fieldcollection"
 )
 
 func Test_AtlassianFetcher(t *testing.T) {

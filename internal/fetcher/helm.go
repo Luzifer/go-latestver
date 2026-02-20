@@ -13,7 +13,7 @@ import (
 
 	"github.com/Luzifer/go-latestver/internal/database"
 	"github.com/Luzifer/go-latestver/internal/helpers"
-	"github.com/Luzifer/go_helpers/v2/fieldcollection"
+	"github.com/Luzifer/go_helpers/fieldcollection"
 	"github.com/pkg/errors"
 	chart "helm.sh/helm/v4/pkg/chart/v2"
 	repo "helm.sh/helm/v4/pkg/repo/v1"

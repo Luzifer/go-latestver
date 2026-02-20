@@ -13,8 +13,8 @@ import (
 
 	"github.com/Luzifer/go-latestver/internal/config"
 	"github.com/Luzifer/go-latestver/internal/database"
-	fileHelper "github.com/Luzifer/go_helpers/v2/file"
-	httpHelper "github.com/Luzifer/go_helpers/v2/http"
+	fileHelper "github.com/Luzifer/go_helpers/file"
+	httpHelper "github.com/Luzifer/go_helpers/http"
 	"github.com/Luzifer/rconfig/v2"
 )
 

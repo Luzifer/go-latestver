@@ -11,7 +11,7 @@ import (
 
 	"github.com/Luzifer/go-latestver/internal/database"
 	"github.com/Luzifer/go-latestver/internal/helpers"
-	"github.com/Luzifer/go_helpers/v2/fieldcollection"
+	"github.com/Luzifer/go_helpers/fieldcollection"
 )
 
 /*

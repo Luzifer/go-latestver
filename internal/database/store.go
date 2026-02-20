@@ -9,7 +9,7 @@ import (
 	"gorm.io/gorm/clause"
 
 	"github.com/Luzifer/go-latestver/internal/version"
-	"github.com/Luzifer/go_helpers/v2/fieldcollection"
+	"github.com/Luzifer/go_helpers/fieldcollection"
 )
 
 type (
