@@ -29,7 +29,7 @@ require (
 	gorm.io/driver/mysql v1.6.0
 	gorm.io/driver/postgres v1.6.0
 	gorm.io/gorm v1.31.1
-	helm.sh/helm/v4 v4.1.0
+	helm.sh/helm/v4 v4.1.1
 	sigs.k8s.io/yaml v1.6.0
 )
 
