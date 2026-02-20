@@ -1,3 +1,14 @@
+# 0.11.2 / 2026-02-20
+
+  * fix(deps): update dependency vue to v3.5.28
+  * fix(deps): update module github.com/go-git/go-git/v5 to v5.16.5 [security]
+  * fix(deps): update module github.com/luzifer/rconfig/v2 to v2.6.1
+  * fix(deps): update module github.com/sirupsen/logrus to v1.9.4
+  * fix(deps): update module golang.org/x/image to v0.36.0
+  * fix(deps): update module golang.org/x/net to v0.50.0
+  * fix(deps): update module helm.sh/helm/v4 to v4.1.1
+  * chore: replace go\_helpers/v2 monolith
+
 # 0.11.1 / 2025-12-17
 
   * fix(deps): update dependency bootstrap to v5.3.8
