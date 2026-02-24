@@ -11,7 +11,7 @@ require (
 	github.com/Luzifer/rconfig/v2 v2.6.1
 	github.com/antchfx/htmlquery v1.3.5
 	github.com/antchfx/jsonquery v1.3.6
-	github.com/antchfx/xpath v1.3.5
+	github.com/antchfx/xpath v1.3.6
 	github.com/blang/semver/v4 v4.0.0
 	github.com/glebarez/sqlite v1.11.0
 	github.com/go-git/go-git/v5 v5.16.5
