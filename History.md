@@ -1,3 +1,15 @@
+# 0.11.3 / 2026-03-15
+
+  * fix(deps): update dependency vue to v3.5.30
+  * fix(deps): update module github.com/antchfx/htmlquery to v1.3.6
+  * fix(deps): update module github.com/antchfx/xpath to v1.3.6
+  * fix(deps): update module github.com/go-git/go-git/v5 to v5.17.0
+  * fix(deps): update module github.com/luzifer/go\_helpers/http to v0.12.3
+  * fix(deps): update module github.com/tdewolff/minify/v2 to v2.24.10
+  * fix(deps): update module golang.org/x/image to v0.37.0
+  * fix(deps): update module golang.org/x/net to v0.52.0
+  * fix(deps): update module helm.sh/helm/v4 to v4.1.3
+
 # 0.11.2 / 2026-02-20
 
   * fix(deps): update dependency vue to v3.5.28
