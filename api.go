@@ -60,7 +60,7 @@ func catalogEntryToAPICatalogEntry(ce database.CatalogEntry) (apiCatalogEntry, e
 
 func handleBadge(w http.ResponseWriter, r *http.Request) {
 	var (
-		compare   = r.FormValue("compare")
+		compare   = r.URL.Query().Get("compare")
 		vars      = mux.Vars(r)
 		name, tag = vars["name"], vars["tag"]
 	)
@@ -244,11 +244,11 @@ func prepareLogForRequest(r *http.Request) ([]database.LogEntry, error) {
 		logs []database.LogEntry
 	)
 
-	if v, err := strconv.Atoi(r.FormValue("num")); err == nil && v > 0 && v < 100 {
+	if v, err := strconv.Atoi(r.URL.Query().Get("num")); err == nil && v > 0 && v < 100 {
 		num = v
 	}
 
-	if v, err := strconv.Atoi(r.FormValue("page")); err == nil && v >= 0 {
+	if v, err := strconv.Atoi(r.URL.Query().Get("page")); err == nil && v >= 0 {
 		page = v
 	}
 
