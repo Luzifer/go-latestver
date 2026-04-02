@@ -10,7 +10,7 @@ require (
 	github.com/Luzifer/go_helpers/http v0.12.3
 	github.com/Luzifer/rconfig/v2 v2.6.1
 	github.com/antchfx/htmlquery v1.3.6
-	github.com/antchfx/jsonquery v1.3.6
+	github.com/antchfx/jsonquery v1.3.7
 	github.com/antchfx/xpath v1.3.6
 	github.com/blang/semver/v4 v4.0.0
 	github.com/glebarez/sqlite v1.11.0
