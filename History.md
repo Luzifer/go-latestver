@@ -1,3 +1,18 @@
+# 0.11.4 / 2026-05-06
+
+  * chore: switch to pnpm
+  * chore: update linter config; resolve linter issues
+  * fix(deps): update dependency @fortawesome/fontawesome-free to v7
+  * fix(deps): update dependency vue-router to v5.0.6
+  * fix(deps): update dependency vue to v3.5.33
+  * fix(deps): update module github.com/antchfx/jsonquery to v1.3.7
+  * fix(deps): update module github.com/go-git/go-git/v5 to v5.18.0 [security]
+  * fix(deps): update module github.com/tdewolff/minify/v2 to v2.24.13
+  * fix(deps): update module golang.org/x/image to v0.39.0
+  * fix(deps): update module golang.org/x/net to v0.53.0
+  * fix(deps): update module helm.sh/helm/v4 to v4.1.4 [security]
+  * fix: update dependencies
+
 # 0.11.3 / 2026-03-15
 
   * fix(deps): update dependency vue to v3.5.30
