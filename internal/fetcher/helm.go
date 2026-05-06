@@ -4,20 +4,22 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"log"
 	"net/http"
+	"slices"
 	"strings"
 	"time"
 
-	"github.com/Luzifer/go-latestver/internal/database"
-	"github.com/Luzifer/go-latestver/internal/helpers"
 	"github.com/Luzifer/go_helpers/fieldcollection"
-	"github.com/pkg/errors"
 	chart "helm.sh/helm/v4/pkg/chart/v2"
 	repo "helm.sh/helm/v4/pkg/repo/v1"
 	"sigs.k8s.io/yaml"
+
+	"github.com/Luzifer/go-latestver/internal/database"
+	"github.com/Luzifer/go-latestver/internal/helpers"
 )
 
 /*
@@ -100,6 +102,20 @@ func (h HELMFetcher) getChartVersionsFromRepo(ctx context.Context, repoURL, char
 	return index.Entries[chartName], nil
 }
 
+// jsonOrYamlUnmarshal unmarshals the given byte slice containing JSON or YAML
+// into the provided interface.
+//
+// It automatically detects whether the data is in JSON or YAML format by
+// checking its validity as JSON. If the data is valid JSON, it will use the
+// `encoding/json` package to unmarshal it. Otherwise, it will use the
+// `sigs.k8s.io/yaml` package to unmarshal the YAML data.
+func (HELMFetcher) jsonOrYamlUnmarshal(b []byte, i any) error {
+	if json.Valid(b) {
+		return json.Unmarshal(b, i) //nolint:wrapcheck // Fine at this point
+	}
+	return yaml.UnmarshalStrict(b, i) //nolint:wrapcheck // Fine at this point
+}
+
 /*
  * Load functions taken from Helm v3 library as they are only defined
  * internally and not exposed
@@ -123,20 +139,20 @@ func (h HELMFetcher) loadIndex(data []byte, source string) (*repo.IndexFile, err
 	}
 
 	for name, cvs := range i.Entries {
-		for idx := len(cvs) - 1; idx >= 0; idx-- {
-			if cvs[idx] == nil {
+		for idx, v := range slices.Backward(cvs) {
+			if v == nil {
 				log.Printf("skipping loading invalid entry for chart %q from %s: empty entry", name, source)
 				continue
 			}
 			// When metadata section missing, initialize with no data
-			if cvs[idx].Metadata == nil {
-				cvs[idx].Metadata = &chart.Metadata{}
+			if v.Metadata == nil {
+				v.Metadata = &chart.Metadata{}
 			}
-			if cvs[idx].APIVersion == "" {
-				cvs[idx].APIVersion = chart.APIVersionV1
+			if v.APIVersion == "" {
+				v.APIVersion = chart.APIVersionV1
 			}
-			if err := cvs[idx].Validate(); err != nil {
-				log.Printf("skipping loading invalid entry for chart %q %q from %s: %s", name, cvs[idx].Version, source, err)
+			if err := v.Validate(); err != nil {
+				log.Printf("skipping loading invalid entry for chart %q %q from %s: %s", name, v.Version, source, err)
 				cvs = append(cvs[:idx], cvs[idx+1:]...)
 			}
 		}
@@ -146,18 +162,4 @@ func (h HELMFetcher) loadIndex(data []byte, source string) (*repo.IndexFile, err
 		return i, repo.ErrNoAPIVersion
 	}
 	return i, nil
-}
-
-// jsonOrYamlUnmarshal unmarshals the given byte slice containing JSON or YAML
-// into the provided interface.
-//
-// It automatically detects whether the data is in JSON or YAML format by
-// checking its validity as JSON. If the data is valid JSON, it will use the
-// `encoding/json` package to unmarshal it. Otherwise, it will use the
-// `sigs.k8s.io/yaml` package to unmarshal the YAML data.
-func (HELMFetcher) jsonOrYamlUnmarshal(b []byte, i interface{}) error {
-	if json.Valid(b) {
-		return json.Unmarshal(b, i) //nolint:wrapcheck // Fine at this point
-	}
-	return yaml.UnmarshalStrict(b, i) //nolint:wrapcheck // Fine at this point
 }

@@ -2,16 +2,17 @@ package fetcher
 
 import (
 	"context"
+	"errors"
+	"fmt"
 	"io"
 	"net/http"
 	"regexp"
 	"time"
 
-	"github.com/pkg/errors"
+	"github.com/Luzifer/go_helpers/fieldcollection"
 
 	"github.com/Luzifer/go-latestver/internal/database"
 	"github.com/Luzifer/go-latestver/internal/helpers"
-	"github.com/Luzifer/go_helpers/fieldcollection"
 )
 
 /*
@@ -35,22 +36,22 @@ func init() { registerFetcher("regex", func() Fetcher { return &RegexFetcher{} }
 func (RegexFetcher) FetchVersion(ctx context.Context, attrs *fieldcollection.FieldCollection) (string, time.Time, error) {
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, attrs.MustString("url", nil), nil)
 	if err != nil {
-		return "", time.Time{}, errors.Wrap(err, "creating request")
+		return "", time.Time{}, fmt.Errorf("creating request: %w", err)
 	}
 
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
-		return "", time.Time{}, errors.Wrap(err, "executing request")
+		return "", time.Time{}, fmt.Errorf("executing request: %w", err)
 	}
 	defer func() { helpers.LogIfErr(resp.Body.Close(), "closing response body after read") }()
 
 	if resp.StatusCode >= httpStatus3xx {
-		return "", time.Time{}, errors.Errorf("HTTP status %d", resp.StatusCode)
+		return "", time.Time{}, fmt.Errorf("HTTP status %d", resp.StatusCode)
 	}
 
 	data, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return "", time.Time{}, errors.Wrap(err, "reading response body")
+		return "", time.Time{}, fmt.Errorf("reading response body: %w", err)
 	}
 
 	matches := regexp.MustCompile(attrs.MustString("regex", nil)).FindStringSubmatch(string(data))
@@ -59,7 +60,7 @@ func (RegexFetcher) FetchVersion(ctx context.Context, attrs *fieldcollection.Fie
 	}
 
 	if l := len(matches); l != regexpFetcherExpectedLength {
-		return "", time.Time{}, errors.Errorf("unpexected number of matches: %d != 2", l)
+		return "", time.Time{}, fmt.Errorf("unpexected number of matches: %d != 2", l)
 	}
 
 	return matches[1], time.Now(), nil
@@ -90,11 +91,11 @@ func (RegexFetcher) Validate(attrs *fieldcollection.FieldCollection) error {
 
 	r, err := regexp.Compile(attrs.MustString("regex", nil))
 	if err != nil {
-		return errors.Wrap(err, "compiling regex expression")
+		return fmt.Errorf("compiling regex expression: %w", err)
 	}
 
 	if n := r.NumSubexp(); n != 1 {
-		return errors.Errorf("regex must have 1 submatch, has %d", n)
+		return fmt.Errorf("regex must have 1 submatch, has %d", n)
 	}
 
 	return nil

@@ -8,7 +8,6 @@ import (
 	"time"
 
 	"github.com/glebarez/sqlite"
-	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 	"gorm.io/driver/mysql"
 	"gorm.io/driver/postgres"
@@ -58,7 +57,7 @@ func NewClient(dbtype, dsn string) (*Client, error) {
 			Logger: dbLogger,
 		})
 		if err != nil {
-			return nil, errors.Wrap(err, "opening mysql database")
+			return nil, fmt.Errorf("opening mysql database: %w", err)
 		}
 		c.db = db
 
@@ -67,7 +66,7 @@ func NewClient(dbtype, dsn string) (*Client, error) {
 			Logger: dbLogger,
 		})
 		if err != nil {
-			return nil, errors.Wrap(err, "opening postgres database")
+			return nil, fmt.Errorf("opening postgres database: %w", err)
 		}
 		c.db = db
 
@@ -76,16 +75,16 @@ func NewClient(dbtype, dsn string) (*Client, error) {
 			Logger: dbLogger,
 		})
 		if err != nil {
-			return nil, errors.Wrap(err, "opening sqlite3 database")
+			return nil, fmt.Errorf("opening sqlite3 database: %w", err)
 		}
 		c.db = db
 
 	default:
-		return nil, errors.Errorf("invalid db type: %s", dbtype)
+		return nil, fmt.Errorf("invalid db type: %s", dbtype)
 	}
 
 	if err := c.initDB(); err != nil {
-		return nil, errors.Wrap(err, "initializing database")
+		return nil, fmt.Errorf("initializing database: %w", err)
 	}
 
 	return c, nil
@@ -98,7 +97,7 @@ func (c Client) Migrate(dest *Client) error {
 		c.Logs,
 	} {
 		if err := m.Migrate(dest); err != nil {
-			return errors.Wrap(err, "executing migrating")
+			return fmt.Errorf("executing migrating: %w", err)
 		}
 	}
 
@@ -111,13 +110,13 @@ func (c Client) initDB() error {
 		"log":         c.Logs.ensureTable,
 	} {
 		if err := fn(); err != nil {
-			return errors.Wrapf(err, "ensuring tables: %s", name)
+			return fmt.Errorf("ensuring table %q: %w", name, err)
 		}
 	}
 
 	return nil
 }
 
-func (l logwrap) Printf(f string, v ...interface{}) {
-	fmt.Fprintf(l.l, f, v...) //nolint:errcheck
+func (l logwrap) Printf(f string, v ...any) {
+	fmt.Fprintf(l.l, f, v...) //nolint:errcheck // only logging
 }

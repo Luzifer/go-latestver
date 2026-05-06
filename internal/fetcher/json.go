@@ -3,18 +3,19 @@ package fetcher
 import (
 	"bytes"
 	"context"
+	"errors"
+	"fmt"
 	"io"
 	"net/http"
 	"regexp"
 	"time"
 
+	"github.com/Luzifer/go_helpers/fieldcollection"
 	"github.com/antchfx/jsonquery"
 	"github.com/antchfx/xpath"
-	"github.com/pkg/errors"
 
 	"github.com/Luzifer/go-latestver/internal/database"
 	"github.com/Luzifer/go-latestver/internal/helpers"
-	"github.com/Luzifer/go_helpers/fieldcollection"
 )
 
 /*
@@ -22,15 +23,15 @@ import (
  * @module_desc Fetches a JSON / JSONP file from remote source and traverses it using XPath expression
  */
 
+type (
+	// JSONFetcher implements the fetcher interface to retrieve a version from a JSON document
+	JSONFetcher struct{}
+)
+
 var (
 	jsonFetcherDefaultRegex = `(v?(?:[0-9]+\.?){2,})`
 	jsonpStripRegex         = regexp.MustCompile(`(?m)^[^\(]+\((.*)\)$`)
 	ptrBoolFalse            = func(v bool) *bool { return &v }(false)
-)
-
-type (
-	// JSONFetcher implements the fetcher interface to retrieve a version from a JSON document
-	JSONFetcher struct{}
 )
 
 func init() { registerFetcher("json", func() Fetcher { return &JSONFetcher{} }) }
@@ -51,18 +52,18 @@ func (JSONFetcher) FetchVersion(ctx context.Context, attrs *fieldcollection.Fiel
 		)
 		req, err = http.NewRequestWithContext(ctx, http.MethodGet, attrs.MustString("url", nil), nil)
 		if err != nil {
-			return "", time.Time{}, errors.Wrap(err, "creating request")
+			return "", time.Time{}, fmt.Errorf("creating request: %w", err)
 		}
 
 		resp, err = http.DefaultClient.Do(req)
 		if err != nil {
-			return "", time.Time{}, errors.Wrap(err, "executing request")
+			return "", time.Time{}, fmt.Errorf("executing request: %w", err)
 		}
 		defer func() { helpers.LogIfErr(resp.Body.Close(), "closing response body after read") }()
 
 		body, err = io.ReadAll(resp.Body)
 		if err != nil {
-			return "", time.Time{}, errors.Wrap(err, "reading response body")
+			return "", time.Time{}, fmt.Errorf("reading response body: %w", err)
 		}
 
 		matches := jsonpStripRegex.FindSubmatch(body)
@@ -81,7 +82,7 @@ func (JSONFetcher) FetchVersion(ctx context.Context, attrs *fieldcollection.Fiel
 
 	node, err := jsonquery.Query(doc, attrs.MustString("xpath", nil))
 	if err != nil {
-		return "", time.Time{}, errors.Wrap(err, "querying xpath")
+		return "", time.Time{}, fmt.Errorf("querying xpath: %w", err)
 	}
 
 	if node == nil {
@@ -93,7 +94,7 @@ func (JSONFetcher) FetchVersion(ctx context.Context, attrs *fieldcollection.Fiel
 	}
 
 	if node.Type != jsonquery.TextNode {
-		return "", time.Time{}, errors.Errorf("xpath expression lead to unexpected node type: %d", node.Type)
+		return "", time.Time{}, fmt.Errorf("xpath expression lead to unexpected node type: %d", node.Type)
 	}
 
 	match := regexp.MustCompile(attrs.MustString("regex", &jsonFetcherDefaultRegex)).FindStringSubmatch(node.Data)
@@ -120,7 +121,7 @@ func (JSONFetcher) Validate(attrs *fieldcollection.FieldCollection) error {
 	}
 
 	if _, err := xpath.Compile(attrs.MustString("xpath", nil)); err != nil {
-		return errors.Wrap(err, "compiling xpath expression")
+		return fmt.Errorf("compiling xpath expression: %w", err)
 	}
 
 	return nil

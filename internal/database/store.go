@@ -1,15 +1,16 @@
 package database
 
 import (
+	"errors"
+	"fmt"
 	"strings"
 	"time"
 
-	"github.com/pkg/errors"
+	"github.com/Luzifer/go_helpers/fieldcollection"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 
 	"github.com/Luzifer/go-latestver/internal/version"
-	"github.com/Luzifer/go_helpers/fieldcollection"
 )
 
 type (
@@ -82,19 +83,23 @@ func (c CatalogMetaStore) GetMeta(ce *CatalogEntry) (*CatalogMeta, error) {
 		err = nil
 	}
 
-	return out, errors.Wrap(err, "querying metadata")
+	if err != nil {
+		return nil, fmt.Errorf("querying metadata: %w", err)
+	}
+
+	return out, nil
 }
 
 // Migrate applies the updated database schema for the CatalogMetaStore
 func (c CatalogMetaStore) Migrate(dest *Client) error {
 	var metas []*CatalogMeta
 	if err := c.c.db.Find(&metas).Error; err != nil {
-		return errors.Wrap(err, "listing meta entries")
+		return fmt.Errorf("listing meta entries: %w", err)
 	}
 
 	for _, m := range metas {
 		if err := dest.Catalog.PutMeta(m); err != nil {
-			return errors.Wrap(err, "storing meta to dest database")
+			return fmt.Errorf("storing meta to dest database: %w", err)
 		}
 	}
 
@@ -103,22 +108,28 @@ func (c CatalogMetaStore) Migrate(dest *Client) error {
 
 // PutMeta stores the updated CatalogMeta
 func (c CatalogMetaStore) PutMeta(cm *CatalogMeta) error {
-	return errors.Wrap(
-		c.c.db.Clauses(clause.OnConflict{UpdateAll: true}).Create(cm).Error,
-		"writing catalog meta",
-	)
+	if err := c.c.db.Clauses(clause.OnConflict{UpdateAll: true}).Create(cm).Error; err != nil {
+		return fmt.Errorf("writing catalog meta: %w", err)
+	}
+
+	return nil
 }
 
 func (c CatalogMetaStore) ensureTable() error {
-	return errors.Wrap(c.c.db.AutoMigrate(&CatalogMeta{}), "applying migration")
+	if err := c.c.db.AutoMigrate(&CatalogMeta{}); err != nil {
+		return fmt.Errorf("applying migration: %w", err)
+	}
+
+	return nil
 }
 
 // Add creates a new LogEntry inside the LogStore
 func (l LogStore) Add(le *LogEntry) error {
-	return errors.Wrap(
-		l.c.db.Create(le).Error,
-		"writing log entry",
-	)
+	if err := l.c.db.Create(le).Error; err != nil {
+		return fmt.Errorf("writing log entry: %w", err)
+	}
+
+	return nil
 }
 
 // List retrieves unfiltered log entries by page
@@ -135,30 +146,34 @@ func (l LogStore) ListForCatalogEntry(ce *CatalogEntry, num, page int) ([]LogEnt
 func (l LogStore) Migrate(dest *Client) error {
 	var logs []*LogEntry
 	if err := l.c.db.Find(&logs).Error; err != nil {
-		return errors.Wrap(err, "listing log entries")
+		return fmt.Errorf("listing log entries: %w", err)
 	}
 
 	for _, l := range logs {
 		if err := dest.Logs.Add(l); err != nil {
-			return errors.Wrap(err, "storing log to dest database")
+			return fmt.Errorf("storing log to dest database: %w", err)
 		}
 	}
 
 	return nil
 }
 
-func (LogStore) listWithFilter(filter *gorm.DB, num, page int) ([]LogEntry, error) {
-	var out []LogEntry
-	return out, errors.Wrap(
-		filter.
-			Order("timestamp desc").
-			Limit(num).Offset(num*page).
-			Find(&out).
-			Error,
-		"fetching log entries",
-	)
+func (l LogStore) ensureTable() error {
+	if err := l.c.db.AutoMigrate(&LogEntry{}); err != nil {
+		return fmt.Errorf("applying migration: %w", err)
+	}
+
+	return nil
 }
 
-func (l LogStore) ensureTable() error {
-	return errors.Wrap(l.c.db.AutoMigrate(&LogEntry{}), "applying migration")
+func (LogStore) listWithFilter(filter *gorm.DB, num, page int) (out []LogEntry, err error) {
+	if err = filter.
+		Order("timestamp desc").
+		Limit(num).Offset(num * page).
+		Find(&out).
+		Error; err != nil {
+		return nil, fmt.Errorf("fetching log entries: %w", err)
+	}
+
+	return out, nil
 }

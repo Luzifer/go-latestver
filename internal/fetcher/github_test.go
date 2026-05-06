@@ -8,7 +8,7 @@ import (
 )
 
 func Test_GithubReleaseFetcher(t *testing.T) {
-	attrs := fieldcollection.FieldCollectionFromData(map[string]interface{}{
+	attrs := fieldcollection.FieldCollectionFromData(map[string]any{
 		"repository": "Luzifer/korvike",
 	})
 
@@ -32,7 +32,7 @@ func Test_GithubReleaseFetcher(t *testing.T) {
 }
 
 func Test_GithubReleaseFetcherInvalid(t *testing.T) {
-	attrs := fieldcollection.FieldCollectionFromData(map[string]interface{}{
+	attrs := fieldcollection.FieldCollectionFromData(map[string]any{
 		"repository": "Luzifer/thiswillneverexist",
 	})
 

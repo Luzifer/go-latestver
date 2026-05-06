@@ -7,8 +7,9 @@ package badge
 // Copyright 2010 The Freetype-Go Authors. All rights reserved.
 
 import (
+	"fmt"
+
 	"github.com/golang/freetype/truetype"
-	"github.com/pkg/errors"
 	"golang.org/x/image/math/fixed"
 )
 
@@ -20,7 +21,7 @@ func calculateTextWidth(text string) (int, error) {
 	binFont, _ := assets.ReadFile("DejaVuSans.ttf")
 	font, err := truetype.Parse(binFont)
 	if err != nil {
-		return 0, errors.Wrap(err, "parsing truetype font")
+		return 0, fmt.Errorf("parsing truetype font: %w", err)
 	}
 
 	scale := fontSize / float64(font.FUnitsPerEm())

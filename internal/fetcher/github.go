@@ -3,16 +3,16 @@ package fetcher
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 	"os"
 	"time"
 
-	"github.com/pkg/errors"
+	"github.com/Luzifer/go_helpers/fieldcollection"
 
 	"github.com/Luzifer/go-latestver/internal/database"
 	"github.com/Luzifer/go-latestver/internal/helpers"
-	"github.com/Luzifer/go_helpers/fieldcollection"
 )
 
 /*
@@ -47,7 +47,7 @@ func (GithubReleaseFetcher) FetchVersion(ctx context.Context, attrs *fieldcollec
 		nil,
 	)
 	if err != nil {
-		return "", time.Time{}, errors.Wrap(err, "creating http request")
+		return "", time.Time{}, fmt.Errorf("creating http request: %w", err)
 	}
 	req.Header.Set("User-Agent", "Luzifer/go-latestver GithubReleaseFetcher")
 
@@ -57,17 +57,17 @@ func (GithubReleaseFetcher) FetchVersion(ctx context.Context, attrs *fieldcollec
 
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
-		return "", time.Time{}, errors.Wrap(err, "executing request")
+		return "", time.Time{}, fmt.Errorf("executing request: %w", err)
 	}
 	defer func() { helpers.LogIfErr(resp.Body.Close(), "closing response body after read") }()
 
 	if resp.StatusCode != http.StatusOK {
-		return "", time.Time{}, errors.Errorf("unexpected HTTP status %d", resp.StatusCode)
+		return "", time.Time{}, fmt.Errorf("unexpected HTTP status %d", resp.StatusCode)
 	}
 
 	var payload []githubRelease
 	if err = json.NewDecoder(resp.Body).Decode(&payload); err != nil {
-		return "", time.Time{}, errors.Wrap(err, "decoding response")
+		return "", time.Time{}, fmt.Errorf("decoding response: %w", err)
 	}
 
 	var release *githubRelease

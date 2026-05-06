@@ -8,7 +8,7 @@ import (
 )
 
 func Test_AtlassianFetcher(t *testing.T) {
-	attrs := fieldcollection.FieldCollectionFromData(map[string]interface{}{
+	attrs := fieldcollection.FieldCollectionFromData(map[string]any{
 		"product": "confluence",
 		"edition": "Standard",
 	})

@@ -4,13 +4,13 @@ package fetcher
 
 import (
 	"context"
+	"errors"
 	"sync"
 	"time"
 
-	"github.com/pkg/errors"
+	"github.com/Luzifer/go_helpers/fieldcollection"
 
 	"github.com/Luzifer/go-latestver/internal/database"
-	"github.com/Luzifer/go_helpers/fieldcollection"
 )
 
 type (
@@ -31,7 +31,7 @@ var (
 	// ErrNoVersionFound signalizes the fetcher was not able to retrieve a version
 	ErrNoVersionFound = errors.New("no version found")
 
-	availableFetchers     = map[string]Create{}
+	availableFetchers     = make(map[string]Create)
 	availableFetchersLock sync.RWMutex
 )
 

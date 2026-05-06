@@ -2,16 +2,17 @@ package fetcher
 
 import (
 	"context"
+	"errors"
+	"fmt"
 	"time"
 
+	"github.com/Luzifer/go_helpers/fieldcollection"
 	"github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/config"
 	"github.com/go-git/go-git/v5/plumbing"
 	"github.com/go-git/go-git/v5/storage/memory"
-	"github.com/pkg/errors"
 
 	"github.com/Luzifer/go-latestver/internal/database"
-	"github.com/Luzifer/go_helpers/fieldcollection"
 )
 
 /*
@@ -30,7 +31,7 @@ func init() { registerFetcher("git_tag", func() Fetcher { return &GitTagFetcher{
 func (g GitTagFetcher) FetchVersion(_ context.Context, attrs *fieldcollection.FieldCollection) (string, time.Time, error) {
 	repo, err := git.Init(memory.NewStorage(), nil)
 	if err != nil {
-		return "", time.Time{}, errors.Wrap(err, "opening in-mem repo")
+		return "", time.Time{}, fmt.Errorf("opening in-mem repo: %w", err)
 	}
 
 	_, err = repo.CreateRemote(&config.RemoteConfig{
@@ -38,7 +39,7 @@ func (g GitTagFetcher) FetchVersion(_ context.Context, attrs *fieldcollection.Fi
 		URLs: []string{attrs.MustString("remote", nil)},
 	})
 	if err != nil {
-		return "", time.Time{}, errors.Wrap(err, "adding remote")
+		return "", time.Time{}, fmt.Errorf("adding remote: %w", err)
 	}
 
 	if err = repo.Fetch(&git.FetchOptions{
@@ -46,12 +47,12 @@ func (g GitTagFetcher) FetchVersion(_ context.Context, attrs *fieldcollection.Fi
 		RefSpecs:   []config.RefSpec{"+refs/tags/*:refs/remotes/origin/tags/*"},
 		RemoteName: "origin",
 	}); err != nil {
-		return "", time.Time{}, errors.Wrap(err, "fetching remote")
+		return "", time.Time{}, fmt.Errorf("fetching remote: %w", err)
 	}
 
 	tags, err := repo.Tags()
 	if err != nil {
-		return "", time.Time{}, errors.Wrap(err, "listing tags")
+		return "", time.Time{}, fmt.Errorf("listing tags: %w", err)
 	}
 
 	var (
@@ -61,7 +62,7 @@ func (g GitTagFetcher) FetchVersion(_ context.Context, attrs *fieldcollection.Fi
 	if err = tags.ForEach(func(ref *plumbing.Reference) error {
 		tt, err := g.tagRefToTime(repo, ref)
 		if err != nil {
-			return errors.Wrap(err, "fetching time for tag")
+			return fmt.Errorf("fetching time for tag: %w", err)
 		}
 
 		if latestTag == nil || tt.After(latestTagTime) {
@@ -71,7 +72,7 @@ func (g GitTagFetcher) FetchVersion(_ context.Context, attrs *fieldcollection.Fi
 
 		return nil
 	}); err != nil {
-		return "", time.Time{}, errors.Wrap(err, "iterating tags")
+		return "", time.Time{}, fmt.Errorf("iterating tags: %w", err)
 	}
 
 	if latestTag == nil {

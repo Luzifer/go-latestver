@@ -1,7 +1,9 @@
+// LatestVer Utility
 package main
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 	"net/url"
@@ -12,7 +14,6 @@ import (
 
 	"github.com/gorilla/feeds"
 	"github.com/gorilla/mux"
-	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 
 	"github.com/Luzifer/go-latestver/internal/badge"
@@ -20,6 +21,8 @@ import (
 	"github.com/Luzifer/go-latestver/internal/database"
 	"github.com/Luzifer/go-latestver/internal/fetcher"
 )
+
+const maxLogsPerPage = 100
 
 type (
 	apiCatalogEntry struct {
@@ -38,7 +41,7 @@ func buildFullURL(u *url.URL, _ error) string {
 func catalogEntryToAPICatalogEntry(ce database.CatalogEntry) (apiCatalogEntry, error) {
 	cm, err := storage.Catalog.GetMeta(&ce)
 	if err != nil {
-		return apiCatalogEntry{}, errors.Wrap(err, "fetching catalog meta")
+		return apiCatalogEntry{}, fmt.Errorf("fetching catalog meta: %w", err)
 	}
 
 	for _, l := range fetcher.Get(ce.Fetcher).Links(ce.FetcherConfig) {
@@ -136,7 +139,7 @@ func handleCatalogGetVersion(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Header().Set("Content-Type", "text/plain")
-	fmt.Fprint(w, cm.CurrentVersion) //nolint:errcheck
+	fmt.Fprint(w, cm.CurrentVersion) //nolint:errcheck // no need to log a single string
 }
 
 func handleCatalogList(w http.ResponseWriter, _ *http.Request) {
@@ -244,7 +247,7 @@ func prepareLogForRequest(r *http.Request) ([]database.LogEntry, error) {
 		logs []database.LogEntry
 	)
 
-	if v, err := strconv.Atoi(r.URL.Query().Get("num")); err == nil && v > 0 && v < 100 {
+	if v, err := strconv.Atoi(r.URL.Query().Get("num")); err == nil && v > 0 && v <= maxLogsPerPage {
 		num = v
 	}
 
@@ -263,5 +266,9 @@ func prepareLogForRequest(r *http.Request) ([]database.LogEntry, error) {
 		logs, err = storage.Logs.ListForCatalogEntry(&ce, num, page)
 	}
 
-	return logs, errors.Wrap(err, "listing log entries")
+	if err != nil {
+		return nil, fmt.Errorf("listing log entries: %w", err)
+	}
+
+	return logs, nil
 }

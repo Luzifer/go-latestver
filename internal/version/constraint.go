@@ -1,6 +1,16 @@
 package version
 
-import "github.com/pkg/errors"
+import (
+	"errors"
+	"fmt"
+)
+
+const (
+	compareResultInvalid compareResult = iota
+	compareResultEqual
+	compareResultDowngrade
+	compareResultUpgrade
+)
 
 type (
 	// Constraint document how a version update should be handled
@@ -19,13 +29,6 @@ type (
 	compareResult uint
 )
 
-const (
-	compareResultInvalid compareResult = iota
-	compareResultEqual
-	compareResultDowngrade
-	compareResultUpgrade
-)
-
 // ShouldApply checks whether a new version should overwrite the old
 // one given the parameters inside the Constraint
 func (c Constraint) ShouldApply(oldVersion, newVersion string) (bool, error) {
@@ -42,7 +45,7 @@ func (c Constraint) ShouldApply(oldVersion, newVersion string) (bool, error) {
 	// Compare versions and check for UpgradeOnly flag
 	compResult, err := comp.Compare(oldVersion, newVersion)
 	if err != nil {
-		return false, errors.Wrap(err, "comparing versions")
+		return false, fmt.Errorf("comparing versions: %w", err)
 	}
 
 	if !c.AllowDowngrade && compResult != compareResultUpgrade {
@@ -52,7 +55,7 @@ func (c Constraint) ShouldApply(oldVersion, newVersion string) (bool, error) {
 	// check for forbidden pre-releases
 	isPreR, err := comp.IsPrerelease(newVersion)
 	if err != nil {
-		return false, errors.Wrap(err, "checking pre-release")
+		return false, fmt.Errorf("checking pre-release: %w", err)
 	}
 
 	if !c.AllowPrerelease && isPreR {

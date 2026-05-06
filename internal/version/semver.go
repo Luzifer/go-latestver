@@ -1,8 +1,10 @@
 package version
 
 import (
+	"errors"
+	"fmt"
+
 	"github.com/blang/semver/v4"
-	"github.com/pkg/errors"
 )
 
 type (
@@ -14,12 +16,12 @@ var _ comparer = semVerComparer{}
 func (semVerComparer) Compare(oldVersion, newVersion string) (compareResult, error) {
 	oldS, err := semver.Make(oldVersion)
 	if err != nil {
-		return compareResultInvalid, errors.Wrap(err, "parsing old version")
+		return compareResultInvalid, fmt.Errorf("parsing old version: %w", err)
 	}
 
 	newS, err := semver.Make(newVersion)
 	if err != nil {
-		return compareResultInvalid, errors.Wrap(err, "parsing new version")
+		return compareResultInvalid, fmt.Errorf("parsing new version: %w", err)
 	}
 
 	switch oldS.Compare(newS) {
@@ -44,7 +46,7 @@ func (semVerComparer) Compare(oldVersion, newVersion string) (compareResult, err
 func (semVerComparer) IsPrerelease(newVersion string) (bool, error) {
 	newS, err := semver.Make(newVersion)
 	if err != nil {
-		return false, errors.Wrap(err, "parsing version")
+		return false, fmt.Errorf("parsing version: %w", err)
 	}
 
 	return newS.Pre != nil, nil

@@ -1,11 +1,10 @@
 package version
 
 import (
+	"fmt"
 	"math"
 	"strconv"
 	"strings"
-
-	"github.com/pkg/errors"
 )
 
 type (
@@ -17,12 +16,12 @@ var _ comparer = numericDotSeparatedComparer{}
 func (n numericDotSeparatedComparer) Compare(oldVersion, newVersion string) (compareResult, error) {
 	oldV, err := n.parse(oldVersion)
 	if err != nil {
-		return compareResultInvalid, errors.Wrap(err, "parsing old version")
+		return compareResultInvalid, fmt.Errorf("parsing old version: %w", err)
 	}
 
 	newV, err := n.parse(newVersion)
 	if err != nil {
-		return compareResultInvalid, errors.Wrap(err, "parsing old version")
+		return compareResultInvalid, fmt.Errorf("parsing old version: %w", err)
 	}
 
 	getSeg := func(v []int, i int) int {
@@ -56,10 +55,10 @@ func (numericDotSeparatedComparer) IsPrerelease(string) (bool, error) {
 func (numericDotSeparatedComparer) parse(ver string) ([]int, error) {
 	var out []int
 
-	for _, seg := range strings.Split(ver, ".") {
+	for seg := range strings.SplitSeq(ver, ".") {
 		segI, err := strconv.Atoi(seg)
 		if err != nil {
-			return nil, errors.Wrap(err, "parsing segment")
+			return nil, fmt.Errorf("parsing segment: %w", err)
 		}
 		out = append(out, segI)
 	}

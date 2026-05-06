@@ -2,16 +2,17 @@ package fetcher
 
 import (
 	"context"
+	"errors"
+	"fmt"
 	"regexp"
 	"time"
 
+	"github.com/Luzifer/go_helpers/fieldcollection"
 	"github.com/antchfx/htmlquery"
 	"github.com/antchfx/xpath"
-	"github.com/pkg/errors"
 	"golang.org/x/net/html"
 
 	"github.com/Luzifer/go-latestver/internal/database"
-	"github.com/Luzifer/go_helpers/fieldcollection"
 )
 
 /*
@@ -19,12 +20,12 @@ import (
  * @module_desc Downloads website, selects text-node using XPath and optionally applies custom regular expression
  */
 
-var htmlFetcherDefaultRegex = `(v?(?:[0-9]+\.?){2,})`
-
 type (
 	// HTMLFetcher implements the fetcher interface to monitor versions on websites by xpath queries
 	HTMLFetcher struct{}
 )
+
+var htmlFetcherDefaultRegex = `(v?(?:[0-9]+\.?){2,})`
 
 func init() { registerFetcher("html", func() Fetcher { return &HTMLFetcher{} }) }
 
@@ -32,12 +33,12 @@ func init() { registerFetcher("html", func() Fetcher { return &HTMLFetcher{} }) 
 func (HTMLFetcher) FetchVersion(_ context.Context, attrs *fieldcollection.FieldCollection) (string, time.Time, error) {
 	doc, err := htmlquery.LoadURL(attrs.MustString("url", nil))
 	if err != nil {
-		return "", time.Time{}, errors.Wrap(err, "loading URL")
+		return "", time.Time{}, fmt.Errorf("loading URL: %w", err)
 	}
 
 	node, err := htmlquery.Query(doc, attrs.MustString("xpath", nil))
 	if err != nil {
-		return "", time.Time{}, errors.Wrap(err, "querying xpath")
+		return "", time.Time{}, fmt.Errorf("querying xpath: %w", err)
 	}
 
 	if node == nil {
@@ -49,7 +50,7 @@ func (HTMLFetcher) FetchVersion(_ context.Context, attrs *fieldcollection.FieldC
 	}
 
 	if node.Type != html.TextNode {
-		return "", time.Time{}, errors.Errorf("xpath expression lead to unexpected node type: %d", node.Type)
+		return "", time.Time{}, fmt.Errorf("xpath expression lead to unexpected node type: %d", node.Type)
 	}
 
 	match := regexp.MustCompile(attrs.MustString("regex", &htmlFetcherDefaultRegex)).FindStringSubmatch(node.Data)
@@ -84,13 +85,13 @@ func (HTMLFetcher) Validate(attrs *fieldcollection.FieldCollection) error {
 	}
 
 	if _, err := xpath.Compile(attrs.MustString("xpath", nil)); err != nil {
-		return errors.Wrap(err, "compiling xpath expression")
+		return fmt.Errorf("compiling xpath expression: %w", err)
 	}
 
 	// @attr regex optional string "(v?(?:[0-9]+\.?){2,})" Regular expression to apply to the text from the XPath expression
 	if attrs.CanString("regex") {
 		if _, err := regexp.Compile(attrs.MustString("regex", nil)); err != nil {
-			return errors.Wrap(err, "invalid regex given")
+			return fmt.Errorf("invalid regex given: %w", err)
 		}
 	}
 

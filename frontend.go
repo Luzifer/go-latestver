@@ -1,12 +1,11 @@
 package main
 
 import (
+	"fmt"
 	"net/http"
 	"os"
 	"path"
 	"path/filepath"
-
-	"github.com/pkg/errors"
 
 	"github.com/Luzifer/go-latestver/internal/helpers"
 )
@@ -33,7 +32,7 @@ func handleSinglePage(w http.ResponseWriter, r *http.Request) {
 
 			stat, err := f.Stat()
 			if err != nil {
-				http.Error(w, errors.Wrap(err, "stating opened file").Error(), http.StatusInternalServerError)
+				http.Error(w, fmt.Errorf("stating opened file: %w", err).Error(), http.StatusInternalServerError)
 				return
 			}
 

@@ -6,16 +6,15 @@ import (
 	"os"
 	"time"
 
+	filehelper "github.com/Luzifer/go_helpers/file"
+	httphelper "github.com/Luzifer/go_helpers/http"
+	"github.com/Luzifer/rconfig/v2"
 	"github.com/gorilla/mux"
-	"github.com/pkg/errors"
 	"github.com/robfig/cron/v3"
 	log "github.com/sirupsen/logrus"
 
 	"github.com/Luzifer/go-latestver/internal/config"
 	"github.com/Luzifer/go-latestver/internal/database"
-	fileHelper "github.com/Luzifer/go_helpers/file"
-	httpHelper "github.com/Luzifer/go_helpers/http"
-	"github.com/Luzifer/rconfig/v2"
 )
 
 var (
@@ -41,12 +40,12 @@ var (
 func initApp() error {
 	rconfig.AutoEnv(true)
 	if err := rconfig.ParseAndValidate(&cfg); err != nil {
-		return errors.Wrap(err, "parsing commandline options")
+		return fmt.Errorf("parsing commandline options: %w", err)
 	}
 
 	l, err := log.ParseLevel(cfg.LogLevel)
 	if err != nil {
-		return errors.Wrap(err, "parsing log-level")
+		return fmt.Errorf("parsing log-level: %w", err)
 	}
 	log.SetLevel(l)
 
@@ -60,7 +59,7 @@ func main() {
 	}
 
 	if cfg.VersionAndExit {
-		fmt.Printf("go-latestver %s\n", version) //nolint:forbidigo
+		fmt.Printf("go-latestver %s\n", version) //nolint:forbidigo // printing version to stdout is fine
 		os.Exit(0)
 	}
 
@@ -73,15 +72,15 @@ func main() {
 	}
 
 	if cfg.WatchConfig {
-		fsWatch, err := fileHelper.NewWatcherWithOpts(
+		fsWatch, err := filehelper.NewWatcherWithOpts(
 			cfg.Config,
-			fileHelper.WatcherOpts{
+			filehelper.WatcherOpts{
 				FollowSymlinks: true,
 			},
 			time.Minute,
-			fileHelper.WatcherCheckPresence,
-			fileHelper.WatcherCheckSize,
-			fileHelper.WatcherCheckMtime,
+			filehelper.WatcherCheckPresence,
+			filehelper.WatcherCheckSize,
+			filehelper.WatcherCheckMtime,
 		)
 		if err != nil {
 			log.WithError(err).Fatal("creating config file watcher")
@@ -117,8 +116,8 @@ func main() {
 	router.PathPrefix("/").HandlerFunc(handleSinglePage)
 
 	var handler http.Handler = router
-	handler = httpHelper.GzipHandler(handler)
-	handler = httpHelper.NewHTTPLogHandlerWithLogger(handler, log.StandardLogger())
+	handler = httphelper.GzipHandler(handler)
+	handler = httphelper.NewHTTPLogHandlerWithLogger(handler, log.StandardLogger())
 
 	server := &http.Server{
 		Addr:              cfg.Listen,
@@ -131,9 +130,9 @@ func main() {
 	}
 }
 
-func reloadConfigOnChange(fsWatch *fileHelper.Watcher) {
+func reloadConfigOnChange(fsWatch *filehelper.Watcher) {
 	for evt := range fsWatch.C {
-		if evt == fileHelper.WatcherEventFileVanished || evt == fileHelper.WatcherEventInvalid {
+		if evt == filehelper.WatcherEventFileVanished || evt == filehelper.WatcherEventInvalid {
 			continue
 		}
 

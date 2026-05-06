@@ -3,6 +3,7 @@ package fetcher
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -10,11 +11,10 @@ import (
 	"strings"
 	"time"
 
-	"github.com/pkg/errors"
+	"github.com/Luzifer/go_helpers/fieldcollection"
 
 	"github.com/Luzifer/go-latestver/internal/database"
 	"github.com/Luzifer/go-latestver/internal/helpers"
-	"github.com/Luzifer/go_helpers/fieldcollection"
 )
 
 /*
@@ -22,14 +22,14 @@ import (
  * @module_desc Fetches latest version of an Atlassian product
  */
 
-var (
-	atlassianDefaultEdition = ""
-	atlassianDefaultSearch  = "TAR.GZ"
-)
-
 type (
 	// AtlassianFetcher implements the fetcher interface to monitor Atlassian products
 	AtlassianFetcher struct{}
+)
+
+var (
+	atlassianDefaultEdition = ""
+	atlassianDefaultSearch  = "TAR.GZ"
 )
 
 func init() { registerFetcher("atlassian", func() Fetcher { return &AtlassianFetcher{} }) }
@@ -40,18 +40,18 @@ func (AtlassianFetcher) FetchVersion(ctx context.Context, attrs *fieldcollection
 
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
 	if err != nil {
-		return "", time.Time{}, errors.Wrap(err, "creating request")
+		return "", time.Time{}, fmt.Errorf("creating request: %w", err)
 	}
 
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
-		return "", time.Time{}, errors.Wrap(err, "executing request")
+		return "", time.Time{}, fmt.Errorf("executing request: %w", err)
 	}
 	defer func() { helpers.LogIfErr(resp.Body.Close(), "closing response body after read") }()
 
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return "", time.Time{}, errors.Wrap(err, "reading response body")
+		return "", time.Time{}, fmt.Errorf("reading response body: %w", err)
 	}
 
 	var payload []struct {
@@ -69,7 +69,7 @@ func (AtlassianFetcher) FetchVersion(ctx context.Context, attrs *fieldcollection
 	}
 
 	if err = json.Unmarshal(body, &payload); err != nil {
-		return "", time.Time{}, errors.Wrap(err, "parsing response JSON")
+		return "", time.Time{}, fmt.Errorf("parsing response JSON: %w", err)
 	}
 
 	sort.Slice(payload, func(j, i int) bool { // j, i -> Reverse sort, biggest date at the top

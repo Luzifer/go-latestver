@@ -2,12 +2,12 @@ package main
 
 import (
 	"context"
-	"crypto/md5" //#nosec G501 // Used to derive a static jitter checksum, not cryptographically
+	"crypto/md5" //#nosec:G501 // Used to derive a static jitter checksum, not cryptographically
+	"fmt"
 	"math"
 	"strings"
 	"time"
 
-	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 
 	"github.com/Luzifer/go-latestver/internal/database"
@@ -38,7 +38,7 @@ func checkForUpdates(ce *database.CatalogEntry) error {
 
 	cm, err := storage.Catalog.GetMeta(ce)
 	if err != nil {
-		return errors.Wrap(err, "getting catalog meta")
+		return fmt.Errorf("getting catalog meta: %w", err)
 	}
 
 	nct := nextCheckTime(ce, cm.LastChecked)
@@ -94,10 +94,10 @@ func checkForUpdates(ce *database.CatalogEntry) error {
 			VersionTo:   ver,
 			VersionFrom: cm.CurrentVersion,
 		}); err != nil {
-			return errors.Wrap(err, "adding log entry")
+			return fmt.Errorf("adding log entry: %w", err)
 		}
 
-		cm.VersionTime = ptrTime(vertime)
+		cm.VersionTime = new(vertime)
 		cm.CurrentVersion = ver
 		cm.Error = ""
 
@@ -109,8 +109,12 @@ func checkForUpdates(ce *database.CatalogEntry) error {
 		cm.Error = ""
 	}
 
-	cm.LastChecked = ptrTime(time.Now().Truncate(time.Second).UTC())
-	return errors.Wrap(storage.Catalog.PutMeta(cm), "updating meta entry")
+	cm.LastChecked = new(time.Now().Truncate(time.Second).UTC())
+	if err = storage.Catalog.PutMeta(cm); err != nil {
+		return fmt.Errorf("updating meta entry: %w", err)
+	}
+
+	return nil
 }
 
 func nextCheckTime(ce *database.CatalogEntry, lastCheck *time.Time) time.Time {
@@ -120,9 +124,9 @@ func nextCheckTime(ce *database.CatalogEntry, lastCheck *time.Time) time.Time {
 	}
 
 	var jitter int64
-	//#nosec G401 // Used to derive a static jitter checksum, not cryptographically
+	//#nosec:G401 // Used to derive a static jitter checksum, not cryptographically
 	for i, c := range md5.Sum([]byte(ce.Key())) {
-		jitter += int64(c) * int64(math.Pow(10, float64(i))) //nolint:mnd // No need for constant here
+		jitter += int64(c) * int64(math.Pow(10, float64(i))) //revive:disable-line:add-constant // No need for constant here
 	}
 
 	next := lastCheck.
@@ -135,5 +139,3 @@ func nextCheckTime(ce *database.CatalogEntry, lastCheck *time.Time) time.Time {
 
 	return next.Truncate(time.Second)
 }
-
-func ptrTime(t time.Time) *time.Time { return &t }
