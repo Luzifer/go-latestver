@@ -8,7 +8,7 @@ import (
 )
 
 func Test_GitTagFetcher(t *testing.T) {
-	attrs := fieldcollection.FieldCollectionFromData(map[string]any{
+	attrs := fieldcollection.FromData(map[string]any{
 		"remote": "https://github.com/Luzifer/go-latestver.git",
 	})
 
@@ -32,7 +32,7 @@ func Test_GitTagFetcher(t *testing.T) {
 }
 
 func Test_GitTagFetcherInvalid(t *testing.T) {
-	attrs := fieldcollection.FieldCollectionFromData(map[string]any{
+	attrs := fieldcollection.FromData(map[string]any{
 		"remote": "https://example.com/example.git",
 	})
 
