@@ -1,5 +1,7 @@
 FROM golang:1.26-alpine@sha256:f85330846cde1e57ca9ec309382da3b8e6ae3ab943d2739500e08c86393a21b1 AS builder
 
+COPY --from=ghcr.io/luzifer-docker/pnpm:v11.0.6@sha256:107603bc6200228d9743f31eef4e3e3b3b2c9ce198ce34b74be4076ab3ce038c . /
+
 COPY . /go/src/github.com/Luzifer/go-latestver
 WORKDIR /go/src/github.com/Luzifer/go-latestver
 
@@ -7,7 +9,7 @@ RUN set -ex \
  && apk add --update \
       git \
       make \
-      nodejs-current \
+      nodejs \
  && make frontend_prod \
  && go install \
       -ldflags "-X main.version=$(git describe --tags --always || echo dev)" \
