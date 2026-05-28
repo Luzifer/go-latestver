@@ -1,6 +1,6 @@
 {
   "devDependencies": {
-    "@babel/eslint-parser": "7.28.6",
+    "@babel/eslint-parser": "7.29.7",
     "@types/bootstrap": "5.2.10",
     "@typescript-eslint/eslint-plugin": "8.59.4",
     "@typescript-eslint/parser": "8.59.4",
