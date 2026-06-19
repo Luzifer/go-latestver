@@ -20,7 +20,7 @@ require (
 	github.com/sirupsen/logrus v1.9.4
 	github.com/stretchr/testify v1.11.1
 	github.com/tdewolff/minify/v2 v2.24.13
-	golang.org/x/image v0.42.0
+	golang.org/x/image v0.43.0
 	golang.org/x/net v0.56.0
 	gopkg.in/yaml.v3 v3.0.1
 	gorm.io/driver/mysql v1.6.0
