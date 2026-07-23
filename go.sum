@@ -30,8 +30,8 @@ github.com/antchfx/htmlquery v1.3.6/go.mod h1:kcVUqancxPygm26X2rceEcagZFFVkLEE7x
 github.com/antchfx/jsonquery v1.3.7 h1:LUoue12xcCj6Q41kYUSAS0UJ+9s3XyxbP5uh7x8aMsw=
 github.com/antchfx/jsonquery v1.3.7/go.mod h1:oGh95SRUXZfnma1B7Q0p1rhgDeSgghub4W+JwnUYv2o=
 github.com/antchfx/xpath v1.3.6/go.mod h1:i54GszH55fYfBmoZXapTHN8T8tkcHfRgLyVwwqzXNcs=
-github.com/antchfx/xpath v1.3.7 h1:wMOJSJ+XDq5EHjH6p7v4UXm8iubIpPyJXftOl36zhII=
-github.com/antchfx/xpath v1.3.7/go.mod h1:i54GszH55fYfBmoZXapTHN8T8tkcHfRgLyVwwqzXNcs=
+github.com/antchfx/xpath v1.3.8 h1:RQlkLaJDKk1Ew1H6CUPUTKM+IQxm+6HTyOgcrfqOU9c=
+github.com/antchfx/xpath v1.3.8/go.mod h1:i54GszH55fYfBmoZXapTHN8T8tkcHfRgLyVwwqzXNcs=
 github.com/armon/go-socks5 v0.0.0-20160902184237-e75332964ef5 h1:0CwZNZbxp69SHPdPJAN/hZIm0C4OItdklCFmMRWYpio=
 github.com/armon/go-socks5 v0.0.0-20160902184237-e75332964ef5/go.mod h1:wHh0iHkYZB8zMSxRWpUBQtwG5a7fFgvEO+odwuTv2gs=
 github.com/beorn7/perks v1.0.1 h1:VlbKKnNfV8bJzeqoa4cOKqO6bYr3WgKZxO8Z16+hsOM=
