@@ -3,10 +3,6 @@ name: test-and-build
 on:
   push: {}
 
-permissions:
-  contents: write
-  issues: write
-
 jobs:
   test-and-build:
     defaults:
