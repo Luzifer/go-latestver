@@ -6,7 +6,7 @@ require (
 	github.com/Luzifer/go_helpers/fieldcollection v0.5.5
 	github.com/Luzifer/go_helpers/file v0.6.5
 	github.com/Luzifer/go_helpers/http v0.12.12
-	github.com/Luzifer/rconfig/v2 v2.6.2
+	github.com/Luzifer/rconfig/v2 v2.6.3
 	github.com/antchfx/htmlquery v1.3.7
 	github.com/antchfx/jsonquery v1.3.8
 	github.com/antchfx/xpath v1.3.9

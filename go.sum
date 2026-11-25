@@ -14,8 +14,8 @@ github.com/Luzifer/go_helpers/file v0.6.5 h1:8Xom8Ir0g05W1dvPywNSU02AUWjnrg/euao
 github.com/Luzifer/go_helpers/file v0.6.5/go.mod h1:FSmAIxR7b/NQEIkj+sOJsh9Cl2tulWiF5TsCuRIgdtY=
 github.com/Luzifer/go_helpers/http v0.12.12 h1:ig3l+MgV50Y3joGPwtM9hy33hZjvxpmb3VVwUph8YU4=
 github.com/Luzifer/go_helpers/http v0.12.12/go.mod h1:DhpLPdAtXNMj5AHufmXi6zMZJ9QyGuG/EPdU5VqKL2g=
-github.com/Luzifer/rconfig/v2 v2.6.2 h1:Dx9WetHvyUx84P8D7WDr7OvsEsD0XT3t04DtCSqT95o=
-github.com/Luzifer/rconfig/v2 v2.6.2/go.mod h1:F8bKJYwzwQT0m0V0N6S8uS7tI6jm05ANCe3D0EHuX/w=
+github.com/Luzifer/rconfig/v2 v2.6.3 h1:a3/uiCENbF1EllPzLa9Fav4KeKvwJjWeSHjGwHtwYWk=
+github.com/Luzifer/rconfig/v2 v2.6.3/go.mod h1:56nLhDKm1ubJ2N24mF7USmhW+jCP2sqGrnEBbM8G+BQ=
 github.com/Masterminds/semver/v3 v3.5.0 h1:kQceYJfbupGfZOKZQg0kou0DgAKhzDg2NZPAwZ/2OOE=
 github.com/Masterminds/semver/v3 v3.5.0/go.mod h1:4V+yj/TJE1HU9XfppCwVMZq3I84lprf4nC11bSS5beM=
 github.com/Microsoft/go-winio v0.5.2/go.mod h1:WpS1mjBmmwHBEWmogvA2mj8546UReBk4v8QkMxJ6pZY=
