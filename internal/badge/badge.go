@@ -61,7 +61,7 @@ func Create(title, text, color string) []byte {
 		"Title":       title,
 		"Text":        text,
 		"TitleAnchor": titleW/2 + xSpacing,
-		"TextAnchor":  titleW + textW/2 + 3*xSpacing,
+		"TextAnchor":  titleW + textW/2 + 3*xSpacing, //revive:disable-line:add-constant // part of calculation, no const needed
 		"Color":       color,
 	})
 
