@@ -25,8 +25,8 @@ importers:
         version: 5.4.0(@vue/compiler-sfc@3.5.44)(esbuild@0.28.2)(vue@3.5.44(typescript@6.0.3))
     devDependencies:
       '@babel/eslint-parser':
-        specifier: 7.29.9
-        version: 7.29.9(@babel/core@7.29.0(supports-color@8.1.1))(eslint@10.13.0(supports-color@8.1.1))
+        specifier: 7.29.13
+        version: 7.29.13(@babel/core@7.29.0(supports-color@8.1.1))(eslint@10.13.0(supports-color@8.1.1))
       '@types/bootstrap':
         specifier: 5.2.11
         version: 5.2.11
@@ -75,8 +75,8 @@ packages:
     resolution: {integrity: sha512-CGOfOJqWjg2qW/Mb6zNsDm+u5vFQ8DxXfbM09z69p5Z6+mE1ikP2jUXw+j42Pf1XTYED2Rni5f95npYeuwMDQA==}
     engines: {node: '>=6.9.0'}
 
-  '@babel/eslint-parser@7.29.9':
-    resolution: {integrity: sha512-GmrJTAtiRbNip+eKFqeuSvoHMJhKlH36j8U0yE3Gqn45B+SIO7NvsEiHtsmzkBqV1hLSMqYr41dI1aZLTkJ37g==}
+  '@babel/eslint-parser@7.29.13':
+    resolution: {integrity: sha512-MURiSTWPmb5VXh3DQYXSgaZSO6+/Cx9ump7lIiVS7iawLGKhsFQScjDuUvVNA4QuPudQeF453Coxrb67wJboSQ==}
     engines: {node: ^10.13.0 || ^12.13.0 || >=14.0.0}
     peerDependencies:
       '@babel/core': ^7.11.0
@@ -1444,7 +1444,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@babel/eslint-parser@7.29.9(@babel/core@7.29.0(supports-color@8.1.1))(eslint@10.13.0(supports-color@8.1.1))':
+  '@babel/eslint-parser@7.29.13(@babel/core@7.29.0(supports-color@8.1.1))(eslint@10.13.0(supports-color@8.1.1))':
     dependencies:
       '@babel/core': 7.29.0(supports-color@8.1.1)
       '@nicolo-ribaudo/eslint-scope-5-internals': 5.1.1-v1
