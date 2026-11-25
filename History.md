@@ -1,3 +1,37 @@
+# 0.11.5 / 2026-11-25
+
+  * fix(deps): update dependency bootstrap to v5.3.9
+  * fix(deps): update dependency @fortawesome/fontawesome-free to v7.3.1 (#302)
+  * fix(deps): update dependency moment to v2.31.0 (#364)
+  * fix(deps): update dependency vue-router to v5.5.1 (#413)
+  * fix(deps): update dependency vue to v3.5.46
+  * fix(deps): update module github.com/antchfx/htmlquery to v1.3.7 (#379)
+  * fix(deps): update module github.com/antchfx/jsonquery to v1.3.8 (#380)
+  * fix(deps): update module github.com/antchfx/xpath to v1.3.8 (#308)
+  * fix(deps): update module github.com/go-git/go-git/v5 to v5.19.3 (#378)
+  * fix(deps): update module github.com/luzifer/go_helpers/*
+  * fix(deps): update module github.com/luzifer/rconfig/v2 to v2.6.3
+  * fix(deps): update module github.com/sirupsen/logrus to v1.10.2 (#347)
+  * fix(deps): update module github.com/stretchr/testify to v1.12.1 (#340)
+  * fix(deps): update module github.com/tdewolff/minify/v2 to v2.25.0
+  * fix(deps): update module golang.org/x/image to v0.48.0 (#414)
+  * fix(deps): update module golang.org/x/net to v0.63.0 (#415)
+  * fix(deps): update module gorm.io/driver/postgres to v1.6.3 (#363)
+  * fix(deps): update module gorm.io/gorm to v1.31.2 (#282)
+  * fix(deps): update module helm.sh/helm/v4 to v4.3.2
+  * chore(sec): update transitive node dependencies
+  * chore(deps): update alpine docker tag to v3.24.4 (#398)
+  * chore(deps): update dependency @babel/eslint-parser to v7.29.9 (#366)
+  * chore(deps): update dependency esbuild to v0.28.2 (#329)
+  * chore(deps): update dependency eslint-plugin-vue to v10.12.1 (#402)
+  * chore(deps): update dependency eslint to v10.15.0 (#404)
+  * chore(deps): update dependency @types/bootstrap to v5.2.11 (#256)
+  * chore(deps): update dependency vue-eslint-parser to v10.4.2
+  * chore(deps): update ghcr.io/luzifer-docker/pnpm docker tag to v11.29.0 (#416)
+  * chore(deps): update golang docker tag to v1.27.4
+  * chore(deps): update module golang.org/x/crypto to v0.59.0 [security] (#407)
+  * chore(deps): update typescript-eslint monorepo to v8.73.0
+
 # 0.11.4 / 2026-05-06
 
   * chore: switch to pnpm
