@@ -1,6 +1,6 @@
 FROM golang:1.27.2-alpine@sha256:f92b6ef800e499660581efdabdf25d9d817a9d124eaf900924f0504e7e27e12d AS builder
 
-COPY --from=ghcr.io/luzifer-docker/pnpm:v11.28.6@sha256:d35ec722ba2d0bc7d8ff9d9920d2b9f851e566d13822e33da1272d085a5b03a8 . /
+COPY --from=ghcr.io/luzifer-docker/pnpm:v11.28.13@sha256:b3ee5bb79c6685c6534335ec9456872fc381b96a46e43f5ed63da0ae8f0fd3c6 . /
 
 COPY . /go/src/github.com/Luzifer/go-latestver
 WORKDIR /go/src/github.com/Luzifer/go-latestver
